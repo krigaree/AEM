@@ -11,6 +11,9 @@ def main():
     greedy_solver = GreedySolver(matrix)
     evaluator = Evaluator()
     evaluator.evaluate(greedy_solver, 10)
+    print(f'Shortest path length: {evaluator.min_val}')
+    print(f'Longest path length: {evaluator.max_val}')
+    print(f'Mean path length: {evaluator.mean_val}')
 
 if __name__ == '__main__':
     main()
