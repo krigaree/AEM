@@ -1,5 +1,6 @@
 from evaluator import Evaluator
 from loader import Loader
+from visualizer import Visualizer
 from solvers.greedy_solver import GreedySolver # type: ignore
 from solvers.regret_solver import RegretSolver # type: ignore
 
@@ -14,6 +15,8 @@ def main():
     print(f'Shortest path length: {evaluator.min_val}')
     print(f'Longest path length: {evaluator.max_val}')
     print(f'Mean path length: {evaluator.mean_val}')
+    visualizer = Visualizer()
+    visualizer.create_graph(evaluator.min_solution, matrix)
 
 if __name__ == '__main__':
     main()
