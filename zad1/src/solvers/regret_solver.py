@@ -1,6 +1,6 @@
 from typing import List, Tuple
 
-import numpy as np # type: ignore
+import numpy as np
 
 from solvers.solver import Solver
 

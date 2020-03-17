@@ -1,6 +1,6 @@
-from typing import List, Tuple, Dict, Any
+from typing import List, Tuple, Dict, Any, Optional
 
-import numpy as np # type: ignore
+import numpy as np
 
 Vertex = List[float]
 
@@ -9,7 +9,7 @@ class Loader:
     def __init__(self, fname: str):
         self.config: Dict[str, Any] = {}
         self.fname = fname
-        self.matrix = None
+        self.matrix: Optional[np.ndarray] = None
         self.vertices: List[Vertex] = []
 
     def load_vertices(self, fname: str = '') -> List[Vertex]:
@@ -34,21 +34,22 @@ class Loader:
                         self.vertices.append(vertex)
         return self.vertices
 
-    def load_matrix(self, fname: str) -> np.ndarray:
-        with open(fname) as f:
+    def load_matrix(self, fname: str) -> Optional[np.ndarray]:
+        with open(fname, 'rb') as f:
             self.matrix = np.load(f)
         return self.matrix
 
     def save_matrix(self, path: str, matrix: np.ndarray) -> None:
-        with open(path, 'w') as f:
+        with open(path, 'wb') as f:
             np.save(f, matrix)
 
     def calculate_matrix(self, vertices: List[Vertex]) -> np.ndarray:
         vert = np.array(vertices)
-        mat = np.zeros(shape=(len(vert),len(vert)))
+        matrix = np.zeros(shape=(len(vert),len(vert)))
         for i in range(1, len(vert)):
             for j in range(i):
                 dist = np.round(np.linalg.norm(vert[i]-vert[j]))
-                mat[i,j] = dist
-                mat[j,i] = dist
-        return mat
+                matrix[i,j] = dist
+                matrix[j,i] = dist
+        self.matrix = matrix
+        return self.matrix

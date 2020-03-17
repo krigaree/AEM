@@ -1,4 +1,6 @@
-import numpy as np # type: ignore
+from typing import List
+
+import numpy as np
 
 Solution = List[int]
 

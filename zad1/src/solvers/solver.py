@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple
 
-import numpy as np # type: ignore
+import numpy as np
 
 Solution = List[int]
 

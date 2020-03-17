@@ -7,13 +7,10 @@ def main():
     loader = Loader('../data/kroA100.tsp')
     vertices = loader.load_vertices()
     matrix = loader.calculate_matrix(vertices)
-    print(matrix[:10,:10])
     greedy_solver = GreedySolver(matrix)
     evaluator = Evaluator()
     evaluator.evaluate(greedy_solver, 10)
-    print(f'Shortest path length: {evaluator.min_val}')
-    print(f'Longest path length: {evaluator.max_val}')
-    print(f'Mean path length: {evaluator.mean_val}')
+    evaluator.print_metrics()
 
 if __name__ == '__main__':
     main()
