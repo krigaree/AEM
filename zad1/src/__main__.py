@@ -11,12 +11,13 @@ def main():
     print(matrix[:10,:10])
     greedy_solver = GreedySolver(matrix)
     evaluator = Evaluator()
-    evaluator.evaluate(greedy_solver, 10)
+    evaluator.evaluate(greedy_solver, 100)
     print(f'Shortest path length: {evaluator.min_val}')
     print(f'Longest path length: {evaluator.max_val}')
     print(f'Mean path length: {evaluator.mean_val}')
     visualizer = Visualizer()
     visualizer.create_graph(evaluator.min_solution, matrix)
+    visualizer.create_graph_euclidean(evaluator.min_solution, matrix, vertices)
 
 if __name__ == '__main__':
     main()
