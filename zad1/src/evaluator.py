@@ -1,31 +1,33 @@
 from typing import List, Tuple
 
-import numpy as np # type: ignore
+import numpy as np
 
-from solvers.solver import Solver # type: ignore
+from solvers.solver import Solver
 
 Solution = List[int]
 
 class Evaluator:
 
     def __init__(self):
-        self.min_val = None
-        self.min_solution = None
-        self.max_val = None
-        self.max_solution = None
-        self.mean_val = None
+        self._min_val = None
+        self._min_solution = None
+        self._max_val = None
+        self._max_solution = None
+        self._mean_val = None
 
-    def evaluate(self, solver: Solver, iterations: int):
+    def evaluate(self, solver: Solver, iterations: int) -> None:
         results = []
         for i in range(iterations):
             results.append(solver.solve(start_idx = i))
-        results = np.array(results)
-        results = results[np.argsort(results[:, 1])]
-        self.min_solution = results[0, 0]
-        self.min_val = results[0, 1]
-        self.max_solution = results[-1, 0]
-        self.max_val = results[-1, 1]
-        self.mean_val = results[:, 1].mean()
+        solutions = np.array(results)
+        solutions = solutions[np.argsort(solutions[:, 1])]
+        self._min_solution = solutions[0, 0]
+        self._min_val = solutions[0, 1]
+        self._max_solution = solutions[-1, 0]
+        self._max_val = solutions[-1, 1]
+        self._mean_val = solutions[:, 1].mean()
 
-if __name__ == '__main__':
-    evaluator = Evaluator()
+    def print_metrics(self) -> None:
+        print(f'Shortest path length: {self._min_val}')
+        print(f'Longest path length: {self._max_val}')
+        print(f'Mean path length: {self._mean_val}')

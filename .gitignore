@@ -1,6 +1,7 @@
+# Zad1
 # Data
 zad1/data/*
 
 # Cache
-*cache*
+zad1/**/*cache*
 
