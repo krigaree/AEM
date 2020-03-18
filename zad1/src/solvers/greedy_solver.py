@@ -2,6 +2,8 @@ from typing import List, Tuple
 
 import numpy as np
 
+from math import ceil
+
 from solvers.solver import Solver
 
 Solution = List[int]
@@ -15,7 +17,7 @@ class GreedySolver(Solver):
         status = [True]*len(self._matrix)
         solution = [start_idx]
         length = 0
-        for i in range(len(status)-1):
+        for i in range(ceil((len(status)-1)/2)):
             x = self._matrix[solution[-1]]
             status[solution[-1]] = False
             st2idx = np.where(status)[0]
