@@ -16,7 +16,7 @@ def main():
     print(f'Longest path length: {evaluator.max_val}')
     print(f'Mean path length: {evaluator.mean_val}')
     visualizer = Visualizer()
-    visualizer.create_graph(evaluator.min_solution, matrix)
+    # visualizer.create_graph(evaluator.min_solution, matrix)
     visualizer.create_graph_euclidean(evaluator.min_solution, matrix, vertices)
 
 if __name__ == '__main__':

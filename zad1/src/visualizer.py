@@ -33,12 +33,5 @@ class Visualizer:
             plt.plot([a[0], b[0]], [a[1], b[1]], '-')
         plt.show()
 
-        # background = Image.new('RGB', (900, 900), (255, 255, 255))
-        # draw = ImageDraw.Draw(background)
-        # for point in 
-        # draw.ellipse((20, 20, 80, 80), fill = 'blue', outline ='blue')
-        # del draw
-        # background.show()
-
     def save_graph(self, graph=None) -> None:
         pass
