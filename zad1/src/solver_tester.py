@@ -6,7 +6,7 @@ from solvers.greedy_cycle_solver import GreedyCycleSolver # type: ignore
 
 Solution = List[int]
 
-if __name__ == '__main__':
+def main():
     loader = Loader('../data/kroA100.tsp')
     vertices = loader.load_vertices()
     matrix = loader.calculate_matrix(vertices)
@@ -15,3 +15,6 @@ if __name__ == '__main__':
         s, l = greedy_solver.solve(0)
     visualizer = Visualizer()
     visualizer.create_graph_euclidean(s, matrix, vertices)
+
+if __name__ == '__main__':
+    main()
