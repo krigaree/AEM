@@ -5,6 +5,7 @@ from math import ceil
 from solvers.solver import Solver
 
 Solution = List[int]
+Vertex = Tuple[int, int]
 
 class GreedyCycleSolver(Solver):
 
@@ -27,13 +28,13 @@ class GreedyCycleSolver(Solver):
 
     def find_nearest_vertex(self, idx: int) -> int:
         # Vector of distances from first node
-        x = self._matrix[idx] 
+        x = self._matrix[idx]
         # Indices of unused nodes
         st2idx = np.where(self.status)[0]
         vert_idx = st2idx[np.argmin(x[st2idx])]
         return vert_idx
 
-    def find_next_vertex(self) -> None:
+    def find_next_vertex(self) -> Vertex:
         st2idx = np.where(self.status)[0]
         edges_zipped = zip(
             self.solution, self.solution[1:] + [self.solution[0]])

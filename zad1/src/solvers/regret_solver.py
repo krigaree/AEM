@@ -5,6 +5,7 @@ from math import ceil
 from solvers.solver import Solver
 
 Solution = List[int]
+Vertex = Tuple[int, int, int]
 
 
 class RegretSolver(Solver):
@@ -40,7 +41,7 @@ class RegretSolver(Solver):
         vert_idx = st2idx[np.argmin(x[st2idx])]
         return vert_idx
 
-    def find_next_vertex(self) -> None:
+    def find_next_vertex(self) -> Vertex:
         st2idx = np.where(self.status)[0]
         edges_zipped = zip(
             self.solution, self.solution[1:] + [self.solution[0]])
@@ -94,7 +95,7 @@ class RegretSolver(Solver):
             self._matrix[edges[:, 1], edges[:, 2]]
         )
         len_changes = added_lengths - edges_lengths
-        idx_min = np.argmin(len_changes)
+        idx_min = np.argmax(len_changes)
         vertex = edges[idx_min, 0]
         return idx_min, vertex, len_changes[idx_min]
 
@@ -107,6 +108,7 @@ class RegretSolver(Solver):
         self.length += len_change
 
         while len(self.solution) < ceil(len(self.status)/2):
+            print(self.solution)
             position, vertex_idx, len_change = self.find_next_vertex()
             position2, _, regret = self.calculate_regret(position)
             if len_change >= regret:
@@ -116,6 +118,6 @@ class RegretSolver(Solver):
                 self.delete_node(position2)
                 self.insert_node(position, vertex_idx)
                 self.length -= regret
-                self.length += regret
+                self.length += len_change
 
         return self.solution, self.length
