@@ -12,7 +12,7 @@ def main():
     matrix = loader.calculate_matrix(vertices)
     greedy_solver = GreedyCycleSolver(matrix)
     for _ in range(100):
-        s, l = greedy_solver.solve(4)
+        s, l = greedy_solver.solve(3)
     visualizer = Visualizer()
     visualizer.create_graph_euclidean(s, matrix, vertices)
 
