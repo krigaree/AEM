@@ -9,7 +9,7 @@ def main():
     loader = Loader('../data/kroA100.tsp')
     vertices = loader.load_vertices()
     matrix = loader.calculate_matrix(vertices)
-    greedy_solver = RegretSolver(matrix)
+    greedy_solver = GreedyCycleSolver(matrix)
     evaluator = Evaluator()
     evaluator.evaluate(greedy_solver, 100)
     print(f'Shortest path length: {evaluator.min_val}')

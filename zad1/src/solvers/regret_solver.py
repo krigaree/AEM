@@ -15,6 +15,15 @@ class RegretSolver(Solver):
         self.solution.insert(position, vert_idx)
         self.status[vert_idx] = False
 
+    def delete_node(self, position) -> None:
+        # print(f'position d: {position}')
+        # print(f'solution d: {self.solution}')
+        if position >= len(self.solution):
+            position = -1
+        # st2idx = np.where(np.logical_not(self.status))[0]
+        self.status[self.solution[position]] = True
+        del self.solution[position]
+
     def insert_first_nodes(self, first_idx: int) -> None:
         # Array for storing ordered idices of used nodes
         self.solution: Solution = []
@@ -61,6 +70,7 @@ class RegretSolver(Solver):
         tmp_status = []
         tmp_status = self.status.copy()
         # print(tmp_status)
+        # print(replaced_idx)
         if replaced_idx >= len(self.solution):
             tmp_status[self.solution[-1]] = True
             tmp_status[self.solution[0]] = True
@@ -76,10 +86,11 @@ class RegretSolver(Solver):
         )
         edges = np.array(list(map(np.array, edges_zipped)))
         # print(f'Edges before deletion: {edges}')
-        edges = np.delete(edges, [replaced_idx-1], axis=0)
         if replaced_idx >= len(self.solution):
             edges = edges[1:-1]
-        edges = np.delete(edges, [replaced_idx-1, replaced_idx], axis=0)
+        else:
+            # edges = np.delete(edges, [replaced_idx-1], axis=0)
+            edges = np.delete(edges, [replaced_idx-1, replaced_idx], axis=0)
         # print(f'Edges after deletion: {edges}')
         # tmp_mat = np.array(
         #     [
@@ -116,15 +127,21 @@ class RegretSolver(Solver):
 
         position, vertex_idx, len_change = self.find_next_vertex()
         self.insert_node(position, vertex_idx)
-        position, vertex_idx, len_change = self.find_next_vertex()
-        self.insert_node(position, vertex_idx)
 
-        for _ in range(ceil((len(self.status))/2)-2):
+        # for _ in range(3):  # range(ceil((len(self.status))/2)-2):
+        while len(self.solution) < 50:  # position, vertex_idx, len_change = self.find_next_vertex()
             position, vertex_idx, len_change = self.find_next_vertex()
             # print(f'self.solution{self.solution}')
             # print(f'position: {position}')
             pos2, v_idx2, len_change_del = self.find_alternative_vertex(position)
 
-            self.insert_node(position, vertex_idx)
+            if len_change >= len_change_del:
+                self.insert_node(position, vertex_idx)
+                self.length += len_change
+            else:
+                self.delete_node(pos2)
+                self.insert_node(position, vertex_idx)
+                self.length -= len_change_del
+                self.length += len_change
 
         return self.solution, self.length
