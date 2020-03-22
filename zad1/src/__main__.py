@@ -1,14 +1,15 @@
 from evaluator import Evaluator
 from loader import Loader
 from visualizer import Visualizer
-from solvers.greedy_solver import GreedySolver # type: ignore
-from solvers.regret_solver import RegretSolver # type: ignore
+from solvers.greedy_solver import GreedySolver
+from solvers.regret_solver import RegretSolver
+from solvers.greedy_cycle_solver import GreedyCycleSolver
 
 def main():
     loader = Loader('../data/kroA100.tsp')
     vertices = loader.load_vertices()
     matrix = loader.calculate_matrix(vertices)
-    greedy_solver = GreedySolver(matrix)
+    greedy_solver = GreedyCycleSolver(matrix)
     evaluator = Evaluator()
     evaluator.evaluate(greedy_solver, 100)
     print(f'Shortest path length: {evaluator.min_val}')
