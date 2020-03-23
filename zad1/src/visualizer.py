@@ -1,9 +1,10 @@
-from typing import List
-import numpy as np # type: ignore
+from typing import List, Union
+import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
 
 Solution = List[int]
+Vertex = List[int]
 
 class Visualizer:
 
@@ -21,19 +22,22 @@ class Visualizer:
         nx.draw(gr, node_size=100)
         plt.show()
 
-    def create_graph_euclidean(self, solution: Solution, matrix: np.ndarray,
-                               vertices: List[List[int]]) -> None:
+    def create_graph_euclidean(
+            self, solution: Solution, matrix: np.ndarray,
+            vertices: Union[np.ndarray, List[Vertex]]
+    ) -> None:
+
         vertices = np.array(vertices)
-        plt.plot(vertices[:, 0], vertices[:, 1], "o")
+        plt.plot(vertices[:, 0], vertices[:, 1], "o") # type: ignore
         points_a = solution.copy()
         points_b = solution.copy()[1:] + solution[:1]
         points_a = vertices[points_a]
         points_b = vertices[points_b]
         for a, b in zip(points_a, points_b):
-            plt.plot([a[0], b[0]], [a[1], b[1]], '-')
+            plt.plot([a[0], b[0]], [a[1], b[1]], '-') # type: ignore
         for n in range(len(vertices)):
-            plt.annotate(str(n), (vertices[n, 0], vertices[n, 1]))
+            plt.annotate(str(n), (vertices[n, 0], vertices[n, 1])) # type: ignore
         plt.show()
 
     def save_graph(self, graph=None) -> None:
-        pass
+        raise NotImplementedError
