@@ -23,6 +23,5 @@ class GreedySolver(Solver):
             st2idx = np.where(status)[0]
             solution.append(st2idx[np.argsort(x[st2idx])][0])
             length += x[solution[-1]]
-        self._solutions.append(solution)
-        self._lengths.append(length)
+        length += self._matrix[solution[0],solution[-1]]
         return solution, length
