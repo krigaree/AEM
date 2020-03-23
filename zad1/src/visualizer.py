@@ -6,6 +6,7 @@ import networkx as nx
 Solution = List[int]
 Vertex = List[int]
 
+
 class Visualizer:
 
     def __init__(self):
@@ -28,15 +29,16 @@ class Visualizer:
     ) -> None:
 
         vertices = np.array(vertices)
-        plt.plot(vertices[:, 0], vertices[:, 1], "o") # type: ignore
+        plt.plot(vertices[:, 0], vertices[:, 1], "o")
         points_a = solution.copy()
         points_b = solution.copy()[1:] + solution[:1]
         points_a = vertices[points_a]
         points_b = vertices[points_b]
         for a, b in zip(points_a, points_b):
-            plt.plot([a[0], b[0]], [a[1], b[1]], '-') # type: ignore
+            plt.plot([a[0], b[0]], [a[1], b[1]], '-')
         for n in range(len(vertices)):
-            plt.annotate(str(n), (vertices[n, 0], vertices[n, 1])) # type: ignore
+            plt.annotate(str(n), (vertices[n, 0], vertices[n, 1]))
+        plt.savefig("wykres.png")
         plt.show()
 
     def save_graph(self, graph=None) -> None:

@@ -1,8 +1,8 @@
 from typing import List, Tuple, Dict, Any, Optional
-
 import numpy as np
 
 Vertex = List[float]
+
 
 class Loader:
 
@@ -20,7 +20,7 @@ class Loader:
             for i, line in enumerate(f):
                 if read_config:
                     data = [x.strip() for x in line.split(':')]
-                    if len(data)>1:
+                    if len(data) > 1:
                         key, value = data
                     else:
                         read_config = False
@@ -29,7 +29,7 @@ class Loader:
                     except:
                         self.config[key] = value
                 else:
-                    if i<self.config['DIMENSION']+len(self.config.keys())+1:
+                    if i < self.config['DIMENSION']+len(self.config.keys())+1:
                         vertex = [float(v) for v in line.split()[1:]]
                         self.vertices.append(vertex)
         return self.vertices
@@ -45,11 +45,11 @@ class Loader:
 
     def calculate_matrix(self, vertices: List[Vertex]) -> np.ndarray:
         vert = np.array(vertices)
-        matrix = np.zeros(shape=(len(vert),len(vert)))
+        matrix = np.zeros(shape=(len(vert), len(vert)))
         for i in range(1, len(vert)):
             for j in range(i):
                 dist = np.round(np.linalg.norm(vert[i]-vert[j]))
-                matrix[i,j] = dist
-                matrix[j,i] = dist
+                matrix[i, j] = dist
+                matrix[j, i] = dist
         self.matrix = matrix
         return self.matrix
