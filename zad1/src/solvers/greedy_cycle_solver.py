@@ -24,7 +24,7 @@ class GreedyCycleSolver(Solver):
         self.insert_node(0, first_idx)
         second_idx = self.find_nearest_vertex(first_idx)
         self.insert_node(1, second_idx)
-        self.length = 0
+        self.length = 2 * (self._matrix[first_idx, second_idx])
 
     def find_nearest_vertex(self, idx: int) -> int:
         # Vector of distances from first node
