@@ -18,10 +18,14 @@ class RegretSolver(Solver):
         self.status[vert_idx] = False
 
     def delete_node(self, position) -> None:
+        print(f"solution before delete: {self.solution}")
+        print(f'position: {position}')
         if position >= len(self.solution):
             position = -1
         self.status[self.solution[position]] = True
         del self.solution[position]
+        print(f"solution after delete: {self.solution}")
+
 
     def insert_first_nodes(self, first_idx: int) -> None:
         # Array for storing ordered idices of used nodes
@@ -65,7 +69,7 @@ class RegretSolver(Solver):
         return idx_min[1]+1, st2idx[idx_min[0]], len_changes[idx_min]
 
     def calculate_regret(self, replaced_idx) -> None:
-        tmp_status = []
+        print(f"replaced_idx: {replaced_idx}")
         tmp_status = self.status.copy()
         if replaced_idx >= len(self.solution):
             tmp_status[self.solution[-1]] = True
@@ -73,17 +77,22 @@ class RegretSolver(Solver):
         else:
             tmp_status[self.solution[replaced_idx-1]] = True
             tmp_status[self.solution[replaced_idx]] = True
+        # print(f"tmp_status: {tmp_status}")
+        print(f"self.solution: {self.solution}")
         st2idx = np.where(np.logical_not(tmp_status))[0]
+        print(f"st2idx: {st2idx}")
         edges_zipped = zip(
             self.solution,
             [self.solution[-1]] + self.solution,
             self.solution[1:] + [self.solution[0]]
         )
         edges = np.array(list(map(np.array, edges_zipped)))
+        print(f"edges before delete: {edges}")
         if replaced_idx >= len(self.solution):
             edges = edges[1:-1]
         else:
             edges = np.delete(edges, [replaced_idx-1, replaced_idx], axis=0)
+        print(f"edges after delete: {edges}")
         added_lengths = np.sum(
             [
                 self._matrix[edges[:, 0], edges[:, 1]],
@@ -91,13 +100,19 @@ class RegretSolver(Solver):
             ],
             axis=0
         )
+        print(f"added_lengths: {added_lengths}")
         edges_lengths = np.array(
             self._matrix[edges[:, 1], edges[:, 2]]
         )
+        print(f"edges_lengths: {edges_lengths}")
         len_changes = added_lengths - edges_lengths
+        print(f"len_changes: {len_changes}")
         idx_min = np.argmax(len_changes)
+        print(f"idx_min: {idx_min}")
         vertex = edges[idx_min, 0]
-        return idx_min, vertex, len_changes[idx_min]
+        idx_max = np.where(self.solution == vertex)[0][0]
+        print(f"vertex: {vertex}")
+        return idx_max, vertex, len_changes[idx_min]
 
     def solve(self, start_idx: int = 0) -> Tuple[Solution, int]:
         self.insert_first_nodes(start_idx)
@@ -107,17 +122,32 @@ class RegretSolver(Solver):
         self.insert_node(position, vertex_idx)
         self.length += len_change
 
+        check = 0
+
         while len(self.solution) < ceil(len(self.status)/2):
-            print(self.solution)
+            # print(self.solution)
+            print('-'*60)
             position, vertex_idx, len_change = self.find_next_vertex()
+            print(f"v len_change: {len_change}")
+            print(f"v: {vertex_idx}")
             position2, _, regret = self.calculate_regret(position)
             if len_change >= regret:
                 self.insert_node(position, vertex_idx)
                 self.length += len_change
             else:
+                print("D E L E T E")
+                print(position, position2)
+
                 self.delete_node(position2)
+
+                if position > position2:
+                    position -= 1
                 self.insert_node(position, vertex_idx)
                 self.length -= regret
                 self.length += len_change
+            check += 1
+            if (check > 10000):
+                print('Broken')
+                return self.solution, 0
 
         return self.solution, self.length
