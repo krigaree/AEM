@@ -1,7 +1,5 @@
 from typing import List, Optional
-
 import numpy as np
-
 from solvers.solver import Solver
 
 Solution = List[int]

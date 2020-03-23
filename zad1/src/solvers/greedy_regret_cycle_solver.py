@@ -5,10 +5,9 @@ from math import ceil
 from solvers.solver import Solver
 
 Solution = List[int]
-Vertex = Tuple[int, int, int]
 
 
-class RegretSolver(Solver):
+class GreedyRegretCycleSolver(Solver):
 
     def __init__(self, matrix: np.ndarray):
         super().__init__(matrix)
@@ -22,7 +21,6 @@ class RegretSolver(Solver):
             position = -1
         self.status[self.solution[position]] = True
         del self.solution[position]
-
 
     def insert_first_nodes(self, first_idx: int) -> None:
         # Array for storing ordered idices of used nodes
@@ -42,7 +40,7 @@ class RegretSolver(Solver):
         vert_idx = st2idx[np.argmin(x[st2idx])]
         return vert_idx
 
-    def find_next_vertex(self) -> Vertex:
+    def find_next_vertex(self) -> Tuple[int, int, int]:
         st2idx = np.where(self.status)[0]
         edges_zipped = zip(
             self.solution, self.solution[1:] + [self.solution[0]])
@@ -65,7 +63,7 @@ class RegretSolver(Solver):
         )
         return idx_min[1]+1, st2idx[idx_min[0]], len_changes[idx_min]
 
-    def calculate_regret(self, replaced_idx):
+    def calculate_regret(self, replaced_idx) -> Tuple[int, int, int]:
         tmp_status = self.status.copy()
         if replaced_idx >= len(self.solution):
             tmp_status[self.solution[-1]] = True

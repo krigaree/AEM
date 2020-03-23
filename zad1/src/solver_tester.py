@@ -2,10 +2,11 @@ from typing import List, Tuple
 from evaluator import Evaluator
 from loader import Loader
 from visualizer import Visualizer
-from solvers.greedy_cycle_solver import GreedyCycleSolver # type: ignore
-from solvers.regret_solver import RegretSolver # type: ignore
+from solvers.greedy_cycle_solver import GreedyCycleSolver
+from solvers.greedy_regret_cycle_solver import GreedyRegretCycleSolver
 
 Solution = List[int]
+
 
 def main():
     loader = Loader('../data/kroA100.tsp')
@@ -17,6 +18,7 @@ def main():
         print(s)
         visualizer = Visualizer()
         visualizer.create_graph_euclidean(s, matrix, vertices)
+
 
 if __name__ == '__main__':
     main()
