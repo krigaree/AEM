@@ -1,7 +1,13 @@
-# Zad1
+# IDE
+*.idea
+
 # Data
 zad1/data/*
+zad2/data/*
 
 # Cache
 zad1/**/*cache*
+
+# Visualization
+*.png
 
