@@ -1,7 +1,7 @@
 from typing import List, Union
 import numpy as np
 import matplotlib.pyplot as plt
-import networkx as nx
+# import networkx as nx
 
 Solution = List[int]
 Vertex = List[int]
