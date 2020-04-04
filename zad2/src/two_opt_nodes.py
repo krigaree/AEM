@@ -25,46 +25,71 @@ class TwoOptNodes:
     def improve(self, tour: Tour, matrix: np.ndarray,
                 all_vertices: Tour) -> Tour:
         """We want to iterate until there is no improvement."""
+        tour.append(tour[0])
         break_flag = True  # If new candidate is found dont break loop
         i = 0
         while break_flag:
             i += 1
             break_flag = False
             delta_inner_nodes = 0
-            for node_i in range(0, len(tour) - 1):
-                for node_j in range(node_i + 2, len(tour) - 1):
-                    if node_i != 0 or node_j != len(tour) - 1:
-                        old_edges = matrix[tour[node_i - 1], tour[node_i]] \
+            for node_i in range(0, len(tour) - 2):
+                if node_i==0:
+                    node_i_prev = len(tour)-2
+                else:
+                    node_i_prev = node_i - 1
+                for node_j in range(node_i + 1, len(tour) - 1):
+                    if node_j==len(tour)-2:
+                        node_j_next = 0
+                    else:
+                        node_j_next = node_j + 1
+
+                    if node_i==0 and node_j==len(tour)-2:
+                        old_edges = matrix[tour[node_i], tour[node_i+1]] \
+                                    + matrix[tour[node_j], tour[node_j-1]]
+                        new_edges = matrix[tour[node_i], tour[node_j-1]] \
+                                    + matrix[tour[node_j], tour[node_i+1]]
+                    elif node_i!=node_j-1:
+                        old_edges = matrix[tour[node_i_prev], tour[node_i]] \
                                     + matrix[tour[node_i], tour[node_i + 1]] \
                                     + matrix[tour[node_j - 1], tour[node_j]] \
-                                    + matrix[tour[node_j], tour[node_j + 1]]
-                        new_edges = matrix[tour[node_i - 1], tour[node_j]] \
-                                    + matrix[tour[node_j], tour[node_i + 1]] \
-                                    + matrix[tour[node_j - 1], tour[node_i]] \
-                                    + matrix[tour[node_i], tour[node_j + 1]]
-                        new_delta = new_edges - old_edges
-                        if new_delta < 0:
-                            if node_i < 1 or new_delta < delta_inner_nodes:
-                                delta_inner_nodes: int = new_delta
-                                candidate_inner = (node_i, node_j)
-                                break_flag = True
+                                    + matrix[tour[node_j], tour[node_j_next]]
+                        new_edges = matrix[tour[node_j], tour[node_i_prev]] \
+                                    + matrix[tour[node_j], tour[node_i+1]] \
+                                    + matrix[tour[node_j-1], tour[node_i]] \
+                                    + matrix[tour[node_i], tour[node_j_next]]
+                    else:
+                        old_edges = matrix[tour[node_i_prev], tour[node_i]] \
+                                    + matrix[tour[node_j], tour[node_j_next]]
+                        new_edges = matrix[tour[node_j], tour[node_i_prev]] \
+                                    + matrix[tour[node_i], tour[node_j_next]]
+                    new_delta = new_edges - old_edges
+                    if new_delta < delta_inner_nodes:
+                        delta_inner_nodes = new_delta
+                        candidate_inner = (node_i, node_j)
+                        break_flag = True
             unused_vertices = list(set(all_vertices) - set(tour))
             delta_new_nodes = 0
             for node_i in range(0, len(tour) - 2):
+                if node_i==0:
+                    node_i_prev = len(tour)-2
+                else:
+                    node_i_prev = node_i - 1
                 for new_node in unused_vertices:
-                    old_edges = matrix[tour[node_i - 1], tour[node_i]] \
+                    old_edges = matrix[tour[node_i_prev], tour[node_i]] \
                                 + matrix[tour[node_i], tour[node_i + 1]]
-                    new_edges = matrix[tour[node_i - 1], new_node] \
+                    new_edges = matrix[tour[node_i_prev], new_node] \
                                 + matrix[new_node, tour[node_i + 1]]
                     new_delta = new_edges - old_edges
                     if new_delta < delta_new_nodes:
-                        delta_new_nodes: int = new_delta
+                        delta_new_nodes = new_delta
                         candidate_new_node = (node_i, new_node)
                         break_flag = True
             if (delta_inner_nodes <= delta_new_nodes) and delta_inner_nodes != 0:
                 tmp = tour[candidate_inner[0]]
                 tour[candidate_inner[0]] = tour[candidate_inner[1]]
                 tour[candidate_inner[1]] = tmp
+                if candidate_inner[0]==0 and candidate_inner[1]==len(tour)-2:
+                    tour[-1] = tour[0]
             elif delta_inner_nodes > delta_new_nodes:
                 tour[candidate_new_node[0]] = candidate_new_node[1]
             l = 0
@@ -72,4 +97,4 @@ class TwoOptNodes:
                 l += matrix[tour[iii], tour[iii + 1]]
             print('l:', l)
         print(i)
-        return tour
+        return tour[:-1]
