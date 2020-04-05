@@ -28,17 +28,17 @@ class TwoOptGreedy:
         shuffled_indices = list(range(0, len(tour) - 1))
         random.shuffle(shuffled_indices)
 
-        for node_i in shuffled_indices:
-            for node_j in shuffled_indices[node_i + 1:]:
-                if node_i != 0 or node_j != len(tour) - 1:
-                    pair = sorted([node_i, node_j])
+        for i in range(len(shuffled_indices)):
+            for node_j in shuffled_indices[i + 1:]:
+                if shuffled_indices[i] != 0 or node_j != len(tour) - 1:
+                    pair = sorted([shuffled_indices[i], node_j])
                     first_edges = matrix[tour[pair[0] - 1], tour[pair[0]]] \
                                   + matrix[tour[pair[1]], tour[pair[1] + 1]]
                     second_edges = matrix[tour[pair[0] - 1], tour[pair[1]]] \
                                    + matrix[tour[pair[0]], tour[pair[1] + 1]]
                     new_delta = second_edges - first_edges
                     if new_delta < 0:
-                        return new_delta, (node_i, node_j)
+                        return new_delta, (pair[0], pair[1])
         return 0, None
 
     def find_best_node_insert(self, tour: Tour, matrix: np.ndarray, all_vertices: Tour) -> (float, Candidate):
@@ -73,13 +73,13 @@ class TwoOptGreedy:
                 if delta != 0:
                     tour = self.swap_edges(tour, candidate[0], candidate[1])
                     length = self.calc_length(tour, matrix)
-                    print('l:', length)
+                    # print('l:', length)
                 else:
                     delta, candidate = self.find_best_node_insert(tour, matrix, all_vertices)
                     if delta != 0:
                         tour[candidate[0]] = candidate[1]
                         length = self.calc_length(tour, matrix)
-                        print('l:', length)
+                        # print('l:', length)
                     else:
                         return tour
             else:
@@ -87,13 +87,13 @@ class TwoOptGreedy:
                 if delta != 0:
                     tour[candidate[0]] = candidate[1]
                     length = self.calc_length(tour, matrix)
-                    print('l:', length)
+                    # print('l:', length)
                 else:
                     delta, candidate = self.find_best_edges_swap(tour, matrix)
                     if delta != 0:
                         tour = self.swap_edges(tour, candidate[0], candidate[1])
                         length = self.calc_length(tour, matrix)
-                        print('l:', length)
+                        # print('l:', length)
                     else:
                         return tour
 

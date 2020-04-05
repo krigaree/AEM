@@ -1,5 +1,7 @@
 from loader import Loader
 from two_opt import TwoOpt
+from two_opt_nodes import TwoOptNodes
+from two_opt_greedy import TwoOptGreedy
 from visualizer import Visualizer
 from solvers.greedy_nn_solver import GreedyNNSolver
 from solvers.greedy_cycle_solver import GreedyCycleSolver

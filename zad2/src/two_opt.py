@@ -27,17 +27,17 @@ class TwoOpt:
         delta = 0
         candidate = None
         for node_i in range(0, len(tour) - 1):
-            for node_j in range(node_i, len(tour) - 1):
-                if node_i != 0 or node_j != len(tour) - 1:
-                    first_edges = matrix[tour[node_i - 1], tour[node_i]] \
-                                  + matrix[tour[node_j], tour[node_j + 1]]
-                    second_edges = matrix[tour[node_i - 1], tour[node_j]] \
-                                   + matrix[tour[node_i], tour[node_j + 1]]
-                    new_delta = second_edges - first_edges
-                    if new_delta < 0:
-                        if node_i < 1 or new_delta < delta:
-                            delta: int = new_delta
-                            candidate = (node_i, node_j)
+            for node_j in range(node_i+1, len(tour) - 1):
+                # if node_i != 0 or node_j != len(tour) - 1:
+                first_edges = matrix[tour[node_i - 1], tour[node_i]] \
+                              + matrix[tour[node_j], tour[node_j + 1]]
+                second_edges = matrix[tour[node_i - 1], tour[node_j]] \
+                               + matrix[tour[node_i], tour[node_j + 1]]
+                new_delta = second_edges - first_edges
+                if new_delta < 0:
+                    if node_i < 1 or new_delta < delta:
+                        delta: int = new_delta
+                        candidate = (node_i, node_j)
         return delta, candidate
 
     def find_best_node_insert(self, tour: Tour, matrix: np.ndarray, all_vertices: Tour) -> (float, Candidate):
@@ -78,7 +78,7 @@ class TwoOpt:
             elif delta_edge > delta_node:
                 tour[candidate_node[0]] = candidate_node[1]
                 break_flag = True
-            length = self.calc_length(tour, matrix)
-            print('l:', length)
-        print(i)
+            # length = self.calc_length(tour, matrix)
+            # print('l:', length)
+        # print(i)
         return tour
