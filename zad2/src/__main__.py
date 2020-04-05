@@ -1,7 +1,9 @@
 from loader import Loader
+<<<<<<< Updated upstream
 from two_opt import TwoOpt
 from two_opt_nodes import TwoOptNodes
 from two_opt_greedy import TwoOptGreedy
+from two_opt_nodes_greedy import TwoOptNodesGreedy
 from visualizer import Visualizer
 from solvers.greedy_nn_solver import GreedyNNSolver
 from solvers.greedy_cycle_solver import GreedyCycleSolver
@@ -20,7 +22,7 @@ def run(path):
 
     visualizer = Visualizer()
 
-    all_vertices = np.arange(len(vertices))
+    all_vertices = list(range(len(vertices)))
     random_solution = all_vertices[:int(np.ceil(len(all_vertices)/2))]
     l = 0
     for i in range(-1, len(random_solution)-1):
@@ -33,7 +35,8 @@ def run(path):
     print('solll:', l)
     visualizer.create_graph_euclidean(sol, matrix, vertices)
 
-    two_opt = TwoOpt()
+    two_opt = TwoOptNodesGreedy()
+    print(sol)
     improved_solution = two_opt.improve(sol, matrix, all_vertices)
     # improved_solution = two_opt.improve(random_solution, matrix, all_vertices)
     print(f'improved: {improved_solution}')
