@@ -35,12 +35,11 @@ class TwoOptNodesGreedy:
         shuffled_indices = list(range(len(tour)-2))
         random.shuffle(shuffled_indices)
         check_all = np.zeros((50,50))
-        print(shuffled_indices)
-        for i, node_i in enumerate(shuffled_indices):
+        for i, node_ii in enumerate(shuffled_indices):
             shuffled_indices_2 = shuffled_indices[i+1:].copy()
             shuffled_indices_2.append(len(tour)-2)
-            print(shuffled_indices_2)
-            for node_j in shuffled_indices_2:
+            for node_jj in shuffled_indices_2:
+                node_i, node_j = node_ii, node_jj
                 if node_j<node_i:
                     node_i, node_j = node_j, node_i
                 check_all[node_i, node_j] += 1
@@ -73,10 +72,10 @@ class TwoOptNodesGreedy:
                                 + matrix[tour[node_i], tour[node_j_next]]
                 new_delta = new_edges - old_edges
                 if new_delta < delta:
-                    print(new_delta, delta, tour[node_i], tour[node_j])
                     delta = new_delta
                     candidate = (node_i, node_j)
-        return delta, candidate
+                    return delta, candidate
+        return 0, None
 
     def find_best_node_insert(
             self, tour: Tour, matrix: np.ndarray, all_vertices: Tour
@@ -101,7 +100,7 @@ class TwoOptNodesGreedy:
                 if new_delta < delta:
                     delta = new_delta
                     candidate = (node_i, new_node)
-        # return delta, candidate
+                    return delta, candidate
         return 0, None
 
     def calc_length(self, tour: Tour, matrix: np.ndarray) -> int:
@@ -120,7 +119,7 @@ class TwoOptNodesGreedy:
                 if delta != 0:
                     tour = self.swap_nodes(tour, candidate[0], candidate[1])
                     length = self.calc_length(tour, matrix)
-                    print('l:', length)
+                    # print('l:', length)
                 else:
                     delta, candidate = self.find_best_node_insert(
                         tour, matrix, all_vertices
@@ -128,9 +127,9 @@ class TwoOptNodesGreedy:
                     if delta != 0:
                         tour[candidate[0]] = candidate[1]
                         length = self.calc_length(tour, matrix)
-                        print('l:', length)
+                        # print('l:', length)
                     else:
-                        print(check_all)
+                        # print('t', check_all)
                         return tour
             else:
                 delta, candidate = self.find_best_node_insert(
@@ -139,13 +138,14 @@ class TwoOptNodesGreedy:
                 if delta != 0:
                     tour[candidate[0]] = candidate[1]
                     length = self.calc_length(tour, matrix)
-                    print('l:', length)
+                    # print('l:', length)
                 else:
                     delta, candidate = self.find_best_node_in_tour(tour, matrix)
                     if delta != 0:
                         tour = self.swap_nodes(tour, candidate[0], candidate[1])
                         length = self.calc_length(tour, matrix)
-                        print('l:', length)
+                        # print('l:', length)
                     else:
+                        # print('s', check_all)
                         return tour
 
