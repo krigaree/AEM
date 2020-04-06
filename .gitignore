@@ -2,6 +2,7 @@
 zad1/data/*
 zad2/data/*
 data/*
+!data/.gitkeep
 
 # Cache
 **/*cache*
