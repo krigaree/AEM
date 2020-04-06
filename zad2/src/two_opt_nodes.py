@@ -113,7 +113,5 @@ class TwoOptNodes:
                 tour[candidate_outter[0]] = candidate_outter[1]
                 break_flag = True
             length = self.calc_length(tour, matrix)
-            print('l:', length)
-        print(i)
 
         return tour[:-1]
