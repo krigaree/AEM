@@ -2,7 +2,7 @@ from typing import List, Tuple
 import numpy as np
 from math import ceil
 
-from solvers.solver import Solver
+from .solver import Solver
 
 Solution = List[int]
 

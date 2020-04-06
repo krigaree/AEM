@@ -1,9 +1,14 @@
-from evaluator import Evaluator
-from loader import Loader
-from visualizer import Visualizer
-from solvers.greedy_nn_solver import GreedyNNSolver
-from solvers.greedy_regret_cycle_solver import GreedyRegretCycleSolver
-from solvers.greedy_cycle_solver import GreedyCycleSolver
+import sys
+import os.path
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+
+from tsp_router.utils.evaluator import Evaluator
+from tsp_router.utils.loader import Loader
+from tsp_router.utils.visualizer import Visualizer
+from tsp_router.constructive_heuristics.greedy_nn_solver import GreedyNNSolver
+from tsp_router.constructive_heuristics.greedy_regret_cycle_solver import GreedyRegretCycleSolver
+from tsp_router.constructive_heuristics.greedy_cycle_solver import GreedyCycleSolver
 
 
 def run(path):
