@@ -7,7 +7,7 @@ from .solver import Solver
 Solution = List[int]
 
 
-class GreedyCycleSolver(Solver):
+class GreedyCycle(Solver):
 
     def __init__(self, matrix: np.ndarray):
         super().__init__(matrix)
