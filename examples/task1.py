@@ -10,7 +10,6 @@ from tsp_router.constructive_heuristics.greedy_nn import GreedyNN
 from tsp_router.constructive_heuristics.greedy_regret_cycle import GreedyRegretCycle
 from tsp_router.constructive_heuristics.greedy_cycle import GreedyCycle
 
-
 def run(path):
     print('-'*21)
     print(f"Executing for {path.split('/')[-1].split('.')[0]}")

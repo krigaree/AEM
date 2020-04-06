@@ -6,7 +6,7 @@ Candidate = Tuple[int, int]
 Tour = List[int]
 
 
-class TwoOptNodes:
+class SteepestOnNodes:
     """Local search tour improvement algorithm.
     It consider every possible 2-edges swap,
     swapping 2 edges when it results in an improved tour.

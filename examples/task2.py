@@ -13,10 +13,10 @@ from tsp_router.utils.evaluator import Evaluator
 from tsp_router.utils.loader import Loader
 from tsp_router.utils.visualizer import Visualizer
 
-from tsp_router.local_search.two_opt import TwoOpt
-from tsp_router.local_search.two_opt_nodes import TwoOptNodes
-from tsp_router.local_search.two_opt_nodes_greedy import TwoOptNodesGreedy
-from tsp_router.local_search.two_opt_greedy import TwoOptGreedy
+from tsp_router.local_search.steepest_on_edges import SteepestOnEdges
+from tsp_router.local_search.steepest_on_nodes import SteepestOnNodes
+from tsp_router.local_search.greedy_on_nodes import GreedyOnNodes
+from tsp_router.local_search.greedy_on_edges import GreedyOnEdges
 
 
 def run(path):
@@ -26,7 +26,7 @@ def run(path):
 
     visualizer = Visualizer()
 
-    two_opt = TwoOptNodesGreedy()
+    two_opt = GreedyOnNodes()
     all_vertices = np.arange(len(vertices))
     solutions = []
     lengths = []

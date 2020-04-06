@@ -9,7 +9,8 @@ Tour = List[int]
 
 check_all = np.zeros((50,50))
 
-class TwoOptNodesGreedy:
+
+class GreedyOnNodes:
     """Local search tour improvement algorithm.
     It consider every possible 2-edges swap,
     swapping 2 edges when it results in an improved tour.
