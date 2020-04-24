@@ -1,10 +1,14 @@
-from evaluator import Evaluator
-from loader import Loader
-from visualizer import Visualizer
-from solvers.greedy_nn_solver import GreedyNNSolver
-from solvers.greedy_regret_cycle_solver import GreedyRegretCycleSolver
-from solvers.greedy_cycle_solver import GreedyCycleSolver
+import sys
+import os.path
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
+from tsp_router.utils.evaluator import Evaluator
+from tsp_router.utils.loader import Loader
+from tsp_router.utils.visualizer import Visualizer
+from tsp_router.constructive_heuristics.greedy_nn import GreedyNN
+from tsp_router.constructive_heuristics.greedy_regret_cycle import GreedyRegretCycle
+from tsp_router.constructive_heuristics.greedy_cycle import GreedyCycle
 
 def run(path):
     print('-'*21)
@@ -15,9 +19,9 @@ def run(path):
     vertices = loader.load_vertices()
     matrix = loader.calculate_matrix(vertices)
 
-    cycle_solver = GreedyCycleSolver(matrix)
-    regret_solver = GreedyRegretCycleSolver(matrix)
-    nn_solver = GreedyNNSolver(matrix)
+    cycle_solver = GreedyCycle(matrix)
+    regret_solver = GreedyRegretCycle(matrix)
+    nn_solver = GreedyNN(matrix)
 
     evaluator = Evaluator()
     visualizer = Visualizer()

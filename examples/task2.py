@@ -1,18 +1,22 @@
-from loader import Loader
-from two_opt import TwoOpt
-from two_opt_nodes import TwoOptNodes
-from two_opt_nodes_greedy import TwoOptNodesGreedy
-from two_opt_greedy import TwoOptGreedy
-
-from solvers.greedy_cycle_solver import GreedyCycleSolver
-from solvers.greedy_regret_cycle_solver import GreedyRegretCycleSolver
-
-from visualizer import Visualizer
+import sys
+import os.path
 from tqdm import tqdm
 import random
 import numpy as np
 from statistics import mean
 from time import time
+
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+
+from tsp_router.utils.evaluator import Evaluator
+from tsp_router.utils.loader import Loader
+from tsp_router.utils.visualizer import Visualizer
+
+from tsp_router.local_search.steepest_on_edges import SteepestOnEdges
+from tsp_router.local_search.steepest_on_nodes import SteepestOnNodes
+from tsp_router.local_search.greedy_on_nodes import GreedyOnNodes
+from tsp_router.local_search.greedy_on_edges import GreedyOnEdges
 
 
 def run(path):
@@ -22,7 +26,7 @@ def run(path):
 
     visualizer = Visualizer()
 
-    two_opt = TwoOptNodesGreedy()
+    two_opt = GreedyOnNodes()
     all_vertices = np.arange(len(vertices))
     solutions = []
     lengths = []
@@ -51,8 +55,8 @@ def run(path):
 
 
 def main():
-    # run('../data/kroA100.tsp')
-    run('../data/kroB100.tsp')
+    run('../data/kroA100.tsp')
+    # run('../../data/kroB100.tsp')
 
 
 if __name__ == '__main__':

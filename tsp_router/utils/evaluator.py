@@ -1,6 +1,6 @@
 from typing import List, Optional
 import numpy as np
-from solvers.solver import Solver
+from ..constructive_heuristics.solver import Solver
 
 Solution = List[int]
 

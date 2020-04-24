@@ -2,12 +2,12 @@ from typing import List, Tuple
 import numpy as np
 from math import ceil
 
-from solvers.solver import Solver
+from .solver import Solver
 
 Solution = List[int]
 
 
-class GreedyCycleSolver(Solver):
+class GreedyCycle(Solver):
 
     def __init__(self, matrix: np.ndarray):
         super().__init__(matrix)
@@ -28,7 +28,7 @@ class GreedyCycleSolver(Solver):
 
     def find_nearest_vertex(self, idx: int) -> int:
         # Vector of distances from first node
-        x = self._matrix[idx] 
+        x = self._matrix[idx]
         # Indices of unused nodes
         st2idx = np.where(self.status)[0]
         vert_idx = st2idx[np.argmin(x[st2idx])]

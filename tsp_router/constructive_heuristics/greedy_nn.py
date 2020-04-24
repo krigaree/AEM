@@ -2,12 +2,12 @@ from typing import List, Tuple
 import numpy as np
 from math import ceil
 
-from solvers.solver import Solver
+from .solver import Solver
 
 Solution = List[int]
 
 
-class GreedyNNSolver(Solver):
+class GreedyNN(Solver):
 
     def __init__(self, matrix: np.ndarray):
         super().__init__(matrix)
