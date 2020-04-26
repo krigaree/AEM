@@ -20,6 +20,8 @@ class SteepestOnEdgesPreviousMoves:
     def swap_nodes(self, node_i: int, node_j: int) -> None:
         new_tour = deepcopy(self.tour)
         new_tour[node_j] = self.tour[node_i]
+        new_tour[self.tour[node_i][0]][1] = node_j
+        new_tour[self.tour[node_i][1]][0] = node_j
         del new_tour[node_i]
         self.tour = new_tour
 
@@ -52,7 +54,7 @@ class SteepestOnEdgesPreviousMoves:
             j = 0
             while first_edge != second_edge:
                 j += 1
-                if (first_edge, second_edge) not in self.edge_used_moves:
+                if (first_edge, second_edge) not in self.used_moves:
                     sum_old_edges = self.matrix[first_edge] + \
                                     self.matrix[second_edge]
                     new_edge_i = (self.tour[first_edge[0]][1],
@@ -64,6 +66,7 @@ class SteepestOnEdgesPreviousMoves:
                     delta = sum_new_edges - sum_old_edges
                     if delta < 0:
                         self.candidates[(first_edge, second_edge)] = delta
+                    self.used_moves.add((first_edge, second_edge))
                 second_edge = self.get_next_edge(second_edge)
             first_edge = self.get_next_edge(first_edge)
             second_edge = self.get_next_edge(first_edge)
@@ -76,7 +79,7 @@ class SteepestOnEdgesPreviousMoves:
                 second_edge = (node, after)
                 new_fist_edge = (before, new_node)
                 new_second_edge = (new_node, after)
-                if (first_edge, second_edge) not in self.node_used_moves:
+                if (first_edge, second_edge) not in self.used_moves:
                     old_edges = self.matrix[first_edge] + self.matrix[
                         second_edge]
                     new_edges = self.matrix[new_fist_edge] + self.matrix[
@@ -84,6 +87,7 @@ class SteepestOnEdgesPreviousMoves:
                     delta = new_edges - old_edges
                     if delta < 0:
                         self.candidates[(node, new_node)] = delta
+                    self.used_moves.add((first_edge, second_edge))
 
     @staticmethod
     def convert_tour(tour: Tour) -> Dict[int, List[int]]:
@@ -96,7 +100,7 @@ class SteepestOnEdgesPreviousMoves:
     @staticmethod
     def invert_tour(tour: Dict[int, List[int]]) -> Tour:
         first = next(iter(tour))
-        new_tour = [next(iter(tour))]
+        new_tour = [first]
         node = tour[first][1]
         while node != first:
             new_tour.append(node)
@@ -112,14 +116,12 @@ class SteepestOnEdgesPreviousMoves:
         break_flag = True  # If new candidate is found don't break loop
         i = 0
         self.candidates = {}
-        self.edge_used_moves = set()
-        self.node_used_moves = set()
+        self.used_moves = set()
         while break_flag:
             i += 1
             break_flag = False
             self.find_best_edges_swap()
-            self.edge_used_moves = self.edge_used_moves | set(
-                self.candidates.keys())
+            self.find_best_node_insert()
             ordered_candidates = OrderedDict(
                 sorted(self.candidates.items(), key=lambda t: t[1]))
             for candidate in ordered_candidates:
@@ -128,17 +130,18 @@ class SteepestOnEdgesPreviousMoves:
                     if candidate[0][0] in self.tour \
                             and self.tour[candidate[0][0]][1] == candidate[0][1] \
                             and candidate[1][0] in self.tour \
-                            and self.tour[candidate[1][0]][1] == candidate[1][
-                        1]:
+                            and self.tour[candidate[1][0]][1] == candidate[1][1]:
                         self.swap_edges(candidate[0], candidate[1])
                         break_flag = True
                         self.candidates.pop(candidate)
                         break
                 else:
-                    if candidate[0] in tour:
+                    if candidate[0] in self.tour and candidate[1] not in self.tour:
                         self.swap_nodes(candidate[0], candidate[1])
                         break_flag = True
                         self.candidates.pop(candidate)
                         break
+                    else:
+                        self.candidates.pop(candidate)
 
         return self.invert_tour(self.tour)
