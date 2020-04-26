@@ -16,28 +16,23 @@ class SteepestOnEdges:
         pass
 
     def swap_nodes(self, node_i: int, node_j: int) -> None:
-        new_tour = deepcopy(self.tour)
-        new_tour[node_j] = self.tour[node_i]
-        new_tour[self.tour[node_i][0]][1] = node_j
-        new_tour[self.tour[node_i][1]][0] = node_j
-        del new_tour[node_i]
-        self.tour = new_tour
+        self.tour[self.tour[node_i][0]][1] = node_j
+        self.tour[self.tour[node_i][1]][0] = node_j
+        self.tour[node_j] = self.tour[node_i].copy()
+        del self.tour[node_i]
 
     def swap_edges(self, edge_i: Tuple[int, int],
                    edge_j: Tuple[int, int]) -> None:
-        new_tour = deepcopy(self.tour)
         node, node_after = edge_i[1], self.tour[edge_i[1]][1]  # next edge
         while True:
-            new_tour[node][0] = self.tour[node][1]  # prev node is next node before
-            new_tour[node][1] = self.tour[node][0]  # next node is prev node
+            self.tour[node] = self.tour[node][::-1]
             node, node_after = node_after, self.tour[node_after][1]  # next edge
             if node == edge_j[1]:
                 break
-        new_tour[edge_i[0]][1] = edge_j[0]
-        new_tour[edge_i[1]][1] = edge_j[1]
-        new_tour[edge_j[0]][0] = edge_i[0]
-        new_tour[edge_j[1]][0] = edge_i[1]
-        self.tour = new_tour
+        self.tour[edge_i[0]][1] = edge_j[0]
+        self.tour[edge_i[1]][1] = edge_j[1]
+        self.tour[edge_j[0]][0] = edge_i[0]
+        self.tour[edge_j[1]][0] = edge_i[1]
 
     def get_next_edge(self, edge: Tuple[int, int]) -> Tuple[int, int]:
         return edge[1], self.tour[edge[1]][1]
@@ -45,6 +40,7 @@ class SteepestOnEdges:
     def find_best_edges_swap(self) -> None:
         first_node = next(iter(self.tour))
         first_edge = (first_node, self.tour[first_node][1])
+        tmp_first = first_edge
         second_edge = self.get_next_edge(first_edge)
         i = 0
         delta = 0
@@ -52,7 +48,7 @@ class SteepestOnEdges:
         while i < len(self.tour) - 1:
             i += 1
             j = 0
-            while first_edge != second_edge:
+            while tmp_first != second_edge:
                 j += 1
                 sum_old_edges = self.matrix[first_edge] + \
                                 self.matrix[second_edge]
