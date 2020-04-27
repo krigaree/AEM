@@ -27,19 +27,28 @@ class SteepestOnEdges:
             new_tour[j:i + 1] = list(reversed(new_tour[j:i + 1]))
         return new_tour
 
+    def get_closest_nodes(self, idx, mat, node_id, n_nodes=10):
+        # idx = np.where(np.isin(mat[node_id], mat[node_id, tour[:-2]]))[0]
+        return idx[np.argsort(mat[node_id, idx])][:n_nodes]
+
+
     def find_best_edges_swap(
             self,
             tour: Tour,
             matrix: np.ndarray,
-            closest_nodes: np.ndarray
+            # closest_nodes: np.ndarray
     ) -> (float, Candidate):
         delta = 0
         candidate = None
+        # cond = np.zeros(matrix.shape[1]) == 1
+        # cond[tour[:-1]] = True
+        # idx = np.where(cond)[0]
         for node_i in range(0, len(tour) - 1):
-            # print(node_i)
-            for node_j in closest_nodes[node_i]:
-                if node_j <= node_i or node_j > len(tour) - 1:
-                    continue
+            # closest_nds = self.get_closest_nodes(idx, matrix, tour[node_i])
+            for node_j in range(node_i+1, len(tour) - 1): # closest_nds:
+                # node_j = tour.index(node_j)
+                # if node_j <= node_i:
+                #     continue
                 first_edges = matrix[tour[node_i - 1], tour[node_i]] \
                               + matrix[tour[node_j], tour[node_j + 1]]
                 second_edges = matrix[tour[node_i - 1], tour[node_j]] \
@@ -80,8 +89,12 @@ class SteepestOnEdges:
         unused_vertices = list(set(all_vertices) - set(tour))
         delta = 0
         candidate = None
+        cond = np.zeros(matrix.shape[1]) == 0
+        cond[tour] = False
+        idx = np.where(cond)[0]
         for node_i in range(0, len(tour) - 1):
-            for new_node in unused_vertices:
+            closest_nds = self.get_closest_nodes(idx, matrix, tour[node_i])
+            for new_node in closest_nds:  # unused_vertices:
                 old_edges = matrix[tour[node_i - 1], tour[node_i]] \
                             + matrix[tour[node_i], tour[node_i + 1]]
                 new_edges = matrix[tour[node_i - 1], new_node] \
@@ -98,14 +111,14 @@ class SteepestOnEdges:
             length += matrix[tour[i], tour[i + 1]]
         return length
 
-    def find_closest_nodes(
-            self,
-            matrix: np.ndarray,
-            tour,
-            number_of_nodes: int = 5
-    ) -> np.ndarray:
-        sorted_matrix = matrix.argsort()[:, tour][:, :number_of_nodes]
-        return sorted_matrix
+    # def find_closest_nodes(
+    #         self,
+    #         matrix: np.ndarray,
+    #         tour,
+    #         number_of_nodes: int = 50
+    # ) -> np.ndarray:
+    #     sorted_matrix = matrix[:, tour[:-1]].argsort()[:, :number_of_nodes]
+    #     return sorted_matrix
 
     def improve(self, tour: Tour, matrix: np.ndarray, all_vertices: Tour) -> \
             List:
@@ -113,13 +126,13 @@ class SteepestOnEdges:
         """We want to iterate until there is no improvement."""
         break_flag = True  # If new candidate is found don't break loop
 
-        closest_nodes = self.find_closest_nodes(matrix, tour)
+        # closest_nodes = self.find_closest_nodes(matrix, tour)
         i = 0
         while break_flag:
             i += 1
             break_flag = False
             delta_edge, candidate_edge = self.find_best_edges_swap(
-                tour, matrix, closest_nodes)
+                tour, matrix)
             delta_node, candidate_node = self.find_best_node_insert(
                 tour, matrix, all_vertices)
 
@@ -130,7 +143,7 @@ class SteepestOnEdges:
                 break_flag = True
             elif delta_edge > delta_node:
                 tour[candidate_node[0]] = candidate_node[1]
-                closest_nodes = self.find_closest_nodes(matrix, tour)
+                # closest_nodes = self.find_closest_nodes(matrix, tour)
                 break_flag = True
             # length = self.calc_length(tour, matrix)
             # print('l:', length)
