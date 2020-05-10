@@ -34,8 +34,9 @@ def run(path):
         random_solution = random.sample(
             list(all_vertices), int(np.ceil(len(all_vertices)/2)))
         start = time()
-        max_time = 500
-        improved_solution = two_opt.improve(random_solution, matrix, all_vertices, max_time=max_time)
+        max_time = 10
+        number_of_iterations, improved_solution = two_opt.improve(random_solution, matrix, all_vertices, max_time=max_time)
+        print("Number of iterations:", number_of_iterations)
         end = time()
         times.append(end - start)
         l = 0

@@ -147,7 +147,7 @@ class SteepestOnEdgesSmallPerturbation:
             self.swap_nodes(node_in_tour_to_swap, node_outside_tour_to_swap)
 
     def improve(self, tour: Tour, matrix: np.ndarray,
-                all_vertices: Tour, max_time: int) -> Tour:
+                all_vertices: Tour, max_time: int) -> Tuple[int, Tour]:
         """We want to iterate until there is no improvement."""
         self.tour = self.convert_tour(tour)
         self.matrix = matrix
@@ -170,10 +170,11 @@ class SteepestOnEdgesSmallPerturbation:
                 if self.tour_length() < best_l:
                     best_tour = deepcopy(self.tour)
                     best_l = self.tour_length()
+                    print(best_l)
                 else:
                     self.tour = in_tour
             else:
                 break
         output_len = self.tour_length(best_tour)
-        # print("Improvement:", input_len - output_len)
+        print("Improvement:", input_len - output_len)
         return i, self.invert_tour(best_tour)
