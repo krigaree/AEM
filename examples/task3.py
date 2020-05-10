@@ -1,11 +1,12 @@
 import sys
 import os.path
 from tqdm import tqdm
-import random
-random.seed(0)
 import numpy as np
 from statistics import mean
 from time import time
+import random
+
+random.seed(0)
 
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
@@ -14,22 +15,29 @@ from tsp_router.utils.evaluator import Evaluator
 from tsp_router.utils.loader import Loader
 from tsp_router.utils.visualizer import Visualizer
 
-from tsp_router.local_search.steepest_on_edges_previous_moves import SteepestOnEdgesPreviousMoves
 
+
+from tsp_router.local_search.steepest_on_edges_new import SteepestOnEdges
+# from tsp_router.local_search.steepest_on_edges import SteepestOnEdges
+
+from tsp_router.local_search.steepest_on_edges_previous_moves import SteepestOnEdgesPreviousMoves
 
 def run(path):
     loader = Loader(path)
-    vertices = loader.load_vertices()[:]
+    vertices = loader.load_vertices()
+
     matrix = loader.calculate_matrix(vertices)
 
     visualizer = Visualizer()
+    
+    two_opt = SteepestOnEdges()
 
-    two_opt = SteepestOnEdgesPreviousMoves()
     all_vertices = np.arange(len(vertices))
     solutions = []
     lengths = []
     times = []
-    for i in tqdm(range(1)):
+
+    for i in tqdm(range(100)):
         random_solution = random.sample(
             list(all_vertices), int(np.ceil(len(all_vertices)/2)))
         start = time()
@@ -53,9 +61,8 @@ def run(path):
 
 
 def main():
-    run('../data/kroA100.tsp')
+    run('../data/kroA200.tsp')
     # run('../../data/kroB100.tsp')
-
 
 if __name__ == '__main__':
     main()
