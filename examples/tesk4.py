@@ -30,11 +30,12 @@ def run(path):
     solutions = []
     lengths = []
     times = []
-    for i in tqdm(range(100)):
+    for i in tqdm(range(1)):
         random_solution = random.sample(
             list(all_vertices), int(np.ceil(len(all_vertices)/2)))
         start = time()
-        improved_solution = two_opt.improve(random_solution, matrix, all_vertices)
+        max_time = 500
+        improved_solution = two_opt.improve(random_solution, matrix, all_vertices, max_time=max_time)
         end = time()
         times.append(end - start)
         l = 0

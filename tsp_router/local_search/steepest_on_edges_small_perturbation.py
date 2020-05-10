@@ -1,4 +1,5 @@
 import random
+import time
 from copy import deepcopy
 from typing import List, Tuple, Dict, Optional
 import numpy as np
@@ -146,36 +147,33 @@ class SteepestOnEdgesSmallPerturbation:
             self.swap_nodes(node_in_tour_to_swap, node_outside_tour_to_swap)
 
     def improve(self, tour: Tour, matrix: np.ndarray,
-                all_vertices: Tour) -> Tour:
+                all_vertices: Tour, max_time: int) -> Tour:
         """We want to iterate until there is no improvement."""
         self.tour = self.convert_tour(tour)
         self.matrix = matrix
         self.all_vertices = all_vertices
         self.local_search()
         l = self.tour_length()
-        new_l = l
+        best_l = l
         swaps = int(0.05 * len(tour))
-        # swaps = 10
-        i = 0
         best_tour = deepcopy(self.tour)
         input_len = self.tour_length()
+        start_time = time.time()
+        i = 0
         while True:
+            i += 1
+            in_tour = deepcopy(self.tour)
             self.perturbation(swaps=swaps)
             self.local_search()
-            # new_l = self.tour_length()
-            if i < 5:
-                if self.tour_length() < l:
-                    if self.tour_length() < new_l:
-                        swaps = max(3, swaps-1)
-                        best_tour = deepcopy(self.tour)
-                        # print(l, new_l, swaps)
-                    new_l = self.tour_length()
-                    # if (l - new_l) / l > 0.2:
-                    #     break
+            t = time.time()-start_time
+            if t < max_time:
+                if self.tour_length() < best_l:
+                    best_tour = deepcopy(self.tour)
+                    best_l = self.tour_length()
+                else:
+                    self.tour = in_tour
             else:
                 break
-            i += 1
         output_len = self.tour_length(best_tour)
-        print("Improvement:", input_len - output_len)
-        return self.invert_tour(best_tour)
-        # return self.invert_tour(self.tour)
+        # print("Improvement:", input_len - output_len)
+        return i, self.invert_tour(best_tour)
