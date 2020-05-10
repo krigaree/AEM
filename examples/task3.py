@@ -17,7 +17,7 @@ from tsp_router.utils.visualizer import Visualizer
 
 
 
-from tsp_router.local_search.steepest_on_edges_new import SteepestOnEdges
+from tsp_router.local_search.steepest_on_edges_candidates import SteepestOnEdges
 # from tsp_router.local_search.steepest_on_edges import SteepestOnEdges
 
 from tsp_router.local_search.steepest_on_edges_previous_moves import SteepestOnEdgesPreviousMoves
