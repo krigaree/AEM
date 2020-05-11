@@ -23,9 +23,10 @@ from tsp_router.local_search.steepest_on_edges_multiple_start import \
     SteepestOnEdgesMultipleStart
 # from tsp_router.local_search.steepest_on_edges import SteepestOnEdges
 from tsp_router.local_search.steepest_on_edges_previous_moves import SteepestOnEdgesPreviousMoves
-
 from tsp_router.local_search.steepest_on_edges_destroy_repair import \
     LocalSearchWithLargeScaleNeighbourhood
+from tsp_router.local_search.steepest_on_edges_small_perturbation import \
+    SteepestOnEdgesSmallPerturbation
 
 def run(path):
     loader = Loader(path)
@@ -36,28 +37,30 @@ def run(path):
     visualizer = Visualizer()
     
     # two_opt = SteepestOnEdges()
-    lswlsn = LocalSearchWithLargeScaleNeighbourhood()
+    # lswlsn = LocalSearchWithLargeScaleNeighbourhood()
+    soesp = SteepestOnEdgesSmallPerturbation()
+    # soesp = LocalSearchWithLargeScaleNeighbourhood()
 
     all_vertices = np.arange(len(vertices))
     solutions = []
     lengths = []
     times = []
 
-    for i in tqdm(range(10)):
+    for i in tqdm(range(5)):
         random_solution = random.sample(
             list(all_vertices), int(np.ceil(len(all_vertices)/2)))
         start = time()
         # improved_solution = two_opt.improve(random_solution, matrix, all_vertices)
         # improved_solution = two_opt.improve(matrix, all_vertices, 100)
-        improved_solution, n_iterations = lswlsn.solve(
-            matrix, all_vertices, 360)
+        improved_solution, n_iterations = soesp.solve(
+            random_solution, matrix, all_vertices, 120)
         print("llll", len(improved_solution))
         print("improved_solution", improved_solution)
         print("unique",  len(np.unique(np.array(improved_solution))))
         print("n_iterations:", n_iterations)
         end = time()
 
-        times.append(end - start)
+        times.append(n_iterations)
         l = 0
         for i in range(-1, len(improved_solution)-1):
             l += matrix[improved_solution[i], improved_solution[i+1]]
@@ -65,6 +68,7 @@ def run(path):
         print("l:", l)
         solutions.append(improved_solution)
 
+    print("file:", path)
     print('min:', min(lengths))
     print('max:', max(lengths))
     print('mean:', mean(lengths))
@@ -72,61 +76,70 @@ def run(path):
     print('max_time:', max(times))
     print('mean_time:', mean(times))
     best_sol = solutions[lengths.index(min(lengths))]
-    visualizer.create_graph_euclidean(best_sol, matrix, vertices)
+    visualizer.create_graph_euclidean(best_sol, matrix, vertices, "wykres.png")
+    print("algo:", soesp.__class__)
 
 
 def run_all_algorithms(path):
-    for algoritm in [LocalSearchWithLargeScaleNeighbourhood, ]
-    loader = Loader(path)
-    vertices = loader.load_vertices()
+    print("RUN ALL")
+    algos = [
+        SteepestOnEdgesMultipleStart,
+        # SteepestOnEdgesSmallPerturbation,
+        LocalSearchWithLargeScaleNeighbourhood
+    ]
+    for lsalgoritm in algos:
+        loader = Loader(path)
+        vertices = loader.load_vertices()
 
-    matrix = loader.calculate_matrix(vertices)
+        matrix = loader.calculate_matrix(vertices)
 
-    visualizer = Visualizer()
+        visualizer = Visualizer()
 
-    # two_opt = SteepestOnEdges()
-    lswlsn = LocalSearchWithLargeScaleNeighbourhood()
+        alg = lsalgoritm()
 
-    all_vertices = np.arange(len(vertices))
-    solutions = []
-    lengths = []
-    times = []
+        all_vertices = np.arange(len(vertices))
+        solutions = []
+        lengths = []
+        times = []
 
-    for i in tqdm(range(10)):
-        random_solution = random.sample(
-            list(all_vertices), int(np.ceil(len(all_vertices) / 2)))
-        start = time()
-        # improved_solution = two_opt.improve(random_solution, matrix, all_vertices)
-        # improved_solution = two_opt.improve(matrix, all_vertices, 100)
-        improved_solution, n_iterations = lswlsn.solve(
-            matrix, all_vertices, 360)
-        print("llll", len(improved_solution))
-        print("improved_solution", improved_solution)
-        print("unique", len(np.unique(np.array(improved_solution))))
-        print("n_iterations:", n_iterations)
-        end = time()
+        for i in tqdm(range(10)):
+            random_solution = random.sample(
+                list(all_vertices), int(np.ceil(len(all_vertices) / 2)))
+            start = time()
+            # improved_solution = two_opt.improve(random_solution, matrix, all_vertices)
+            # improved_solution = two_opt.improve(matrix, all_vertices, 100)
+            improved_solution, n_iterations = alg.solve(
+                random_solution, matrix, all_vertices, 360)
+            # print("llll", len(improved_solution))
+            # print("improved_solution", improved_solution)
+            print("unique", len(np.unique(np.array(improved_solution))))
+            print("n_iterations:", n_iterations)
+            end = time()
 
-        times.append(end - start)
-        l = 0
-        for i in range(-1, len(improved_solution) - 1):
-            l += matrix[improved_solution[i], improved_solution[i + 1]]
-        print("l:", l)
-        lengths.append(l)
-        solutions.append(improved_solution)
+            times.append(n_iterations)
+            l = 0
+            for i in range(-1, len(improved_solution) - 1):
+                l += matrix[improved_solution[i], improved_solution[i + 1]]
+            print("l:", l)
+            lengths.append(l)
+            solutions.append(improved_solution)
 
-    print('min:', min(lengths))
-    print('max:', max(lengths))
-    print('mean:', mean(lengths))
-    print('min_time:', min(times))
-    print('max_time:', max(times))
-    print('mean_time:', mean(times))
-    best_sol = solutions[lengths.index(min(lengths))]
-    visualizer.create_graph_euclidean(best_sol, matrix, vertices)
+        print("file:", path)
+        print("algo:", alg.__class__)
+        print('min:', min(lengths))
+        print('max:', max(lengths))
+        print('mean:', mean(lengths))
+        print('min_time:', min(times))
+        print('max_time:', max(times))
+        print('mean_time:', mean(times))
+        best_sol = solutions[lengths.index(min(lengths))]
+        visualizer.create_graph_euclidean(
+            best_sol, matrix, vertices, str(alg.__class__) + ".png")
 
 def main():
     # run('../data/kroA200.tsp')
-    # run('../../data/kroB100.tsp')
-    run_all_algorithms('../../data/kroB100.tsp')
+    run('../data/kroB200.tsp')
+    # run_all_algorithms('../data/kroA200.tsp')
 
 if __name__ == '__main__':
     main()

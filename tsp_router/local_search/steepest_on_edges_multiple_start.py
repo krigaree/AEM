@@ -99,9 +99,9 @@ class SteepestOnEdgesMultipleStart:
         return random.sample(
             list(all_vertices), int(np.ceil(len(all_vertices) / 2)))
 
-    def improve(self, empty_parameter, matrix: np.ndarray, all_vertices: Tour,
+    def solve(self, empty_parameter, matrix: np.ndarray, all_vertices: Tour,
                 empty_parameter2 : int
-                ) -> List:
+                ) -> Tuple[List, int]:
         """We want to iterate until there is no improvement."""
         break_flag = True  # If new candidate is found don't break loop
 
@@ -116,4 +116,4 @@ class SteepestOnEdgesMultipleStart:
                 best_tour = new_tour
                 best_length = new_length
 
-        return best_tour
+        return best_tour, 100

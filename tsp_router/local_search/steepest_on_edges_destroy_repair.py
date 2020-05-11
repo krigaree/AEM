@@ -124,7 +124,7 @@ class LocalSearchWithLargeScaleNeighbourhood:
             tour,
             matrix: np.ndarray,
             all_vertices: Tour,
-            max_time: float
+            max_time: int
     ) -> Tuple[List, int]:
         # tour = Tour(tour)
         """We want to iterate until there is no improvement."""

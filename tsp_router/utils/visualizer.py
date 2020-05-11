@@ -25,7 +25,7 @@ class Visualizer:
 
     def create_graph_euclidean(
             self, solution: Solution, matrix: np.ndarray,
-            vertices: Union[np.ndarray, List[Vertex]]
+            vertices: Union[np.ndarray, List[Vertex]], file_name: str
     ) -> None:
 
         vertices = np.array(vertices)
@@ -38,8 +38,8 @@ class Visualizer:
             plt.plot([a[0], b[0]], [a[1], b[1]], '-')
         for n in range(len(vertices)):
             plt.annotate(str(n), (vertices[n, 0], vertices[n, 1]))
-        plt.savefig("wykres.png")
-        plt.show()
+        plt.savefig(file_name)  # ("wykres.png")
+        # plt.show()
 
     def save_graph(self, graph=None) -> None:
         raise NotImplementedError
