@@ -43,11 +43,11 @@ def run(path):
     lengths = []
     times = []
 
-    for i in tqdm(range(5)):
+    for i in tqdm(range(1)):
         random_solution = random.sample(
             list(all_vertices), int(np.ceil(len(all_vertices) / 2)))
         start = time()
-        improved_solution, n_iterations = solver.solve(120)
+        improved_solution, n_iterations = solver.solve(10)
         print("llll", len(improved_solution))
         print("improved_solution", improved_solution)
         print("unique", len(np.unique(np.array(improved_solution))))

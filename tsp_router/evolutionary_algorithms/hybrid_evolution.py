@@ -23,18 +23,20 @@ class HybridEvolution:
         self.matrix = matrix
         self.all_vertices = list(range(self.matrix.shape[0]))
 
-    def solve(self, max_time: int) -> Tuple[int, List[int]]:
+    def solve(self, max_time: int) -> Tuple[List[int], int]:
         pop = self.generate_population(population_size=20)
         start_time = time()
+        i = 0
         while max_time > (time() - start_time):
             parent1, parent2 = self.draw_parents(pop)
             child_solution = self.recombine(parent1, parent2)
             child_solution = self.local_search.improve(
-                child_solution, self.matrix, self.all_vertices)
-            if self.check_if_improves():
-                self.replace_worst(pop, child_solution)
-
-        return self.find_best_solution()
+                parent1, self.matrix, self.all_vertices)
+            # if self.check_if_improves():
+            #     self.replace_worst(pop, child_solution)
+            self.replace_if_improves(pop, child_solution)
+            i += 1
+        return self.find_best_solution(pop), i
 
     def generate_population(self, population_size) -> List[List[int]]:
         population = []
@@ -49,12 +51,7 @@ class HybridEvolution:
         rand_choices = random.sample(range(len(population)), 2)
         return population[rand_choices[0]], population[rand_choices[1]]
 
-    def recombine(self):
-        def gen_rand(tour_len):
-            return random.sample(list(range(tour_len)), int(np.ceil(tour_len)))
-        tour_len = 100
-        parent1, parent2 = gen_rand(tour_len), gen_rand(tour_len)
-        print(parent1, parent2)
+    def recombine(self, parent1, parent2):
         parent1 = Tour.convert_tour(parent1)
         parent2 = Tour.convert_tour(parent2)
         sub_tours = []
@@ -103,25 +100,31 @@ class HybridEvolution:
 
         print(parent1, parent2)
         print("SUB TOURS:", sub_tours)
-        # print("FINAL SUB TOURS:", final_sub_tours)
 
+    def replace_if_improves(self, population, solution):
+        lengths = np.array([self.calc_length(sol) for sol in population])
+        new_length = self.calc_length(solution)
+        max_idx = np.argmax(lengths)
+        if (new_length < lengths[max_idx]) and (solution not in population):
+            population[max_idx] == solution
 
+    def find_best_solution(self, population):
+        lengths = np.array([self.calc_length(sol) for sol in population])
+        min_idx = np.argmin(lengths)
+        return population[min_idx]
 
+    def calc_length(self, solution):
+        length = 0
+        for i in range(len(solution)):
+            length += self.matrix[solution[i-1], solution[i]]
+        return length
 
-
-
-    def check_if_improves(self):
-        pass
-
-    def replace_worst(self):
-        pass
-
-    def find_best_solution(self):
-        pass
 
 if __name__ == "__main__":
     loader = Loader("../../data/kroA200.tsp")
     vertices = loader.load_vertices()
     matrix = loader.calculate_matrix(vertices)
     solver = HybridEvolution(matrix)
-    solver.recombine()
+    sol = solver.solve(10)
+    print("sol: ", sol)
+    print("len: ", len)
