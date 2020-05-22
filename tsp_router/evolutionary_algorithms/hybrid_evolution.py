@@ -14,6 +14,7 @@ class HybridEvolution:
     def __init__(self, matrix: np.ndarray):
         self.local_search = SteepestOnEdges()
         self.matrix = matrix
+        self.all_vertices = list(range(self.matrix.shape[0]))
 
     def solve(self, max_time: int) -> Tuple[int, Tour]:
         pop = self.generate_population()
@@ -22,13 +23,13 @@ class HybridEvolution:
             parent1, parent2 = self.draw_parents(pop)
             child_solution = self.recombine(parent1, parent2)
             child_solution = self.local_search.improve(
-                child_solution, self.matrix, list(range(self.matrix.shape[0])))
+                child_solution, self.matrix, self.all_vertices)
             if self.check_if_improves():
                 self.replace_worst(pop, child_solution)
 
         return self.find_best_solution()
 
-    def generate_population(self):
+    def generate_population(self, population_size):
         pass
 
     def draw_parents(self):
