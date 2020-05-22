@@ -35,7 +35,7 @@ def run(path):
     # ms = SteepestOnEdgesMultipleStart()
     # sp = SteepestOnEdgesSmallPerturbation()
     # ln = LocalSearchWithLargeScaleNeighbourhood()
-    he = HybridEvolution()
+    he = HybridEvolution(matrix)
     solver = he
 
     all_vertices = np.arange(len(vertices))
@@ -47,8 +47,7 @@ def run(path):
         random_solution = random.sample(
             list(all_vertices), int(np.ceil(len(all_vertices) / 2)))
         start = time()
-        improved_solution, n_iterations = solver.solve(
-            random_solution, matrix, all_vertices, 120)
+        improved_solution, n_iterations = solver.solve(120)
         print("llll", len(improved_solution))
         print("improved_solution", improved_solution)
         print("unique", len(np.unique(np.array(improved_solution))))

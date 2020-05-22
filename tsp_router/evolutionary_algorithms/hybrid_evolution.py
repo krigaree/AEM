@@ -17,9 +17,9 @@ class HybridEvolution:
         self.all_vertices = list(range(self.matrix.shape[0]))
 
     def solve(self, max_time: int) -> Tuple[int, Tour]:
-        pop = self.generate_population()
+        pop = self.generate_population(population_size=20)
         start_time = time()
-        while max_time < (time() - start_time):
+        while max_time > (time() - start_time):
             parent1, parent2 = self.draw_parents(pop)
             child_solution = self.recombine(parent1, parent2)
             child_solution = self.local_search.improve(
@@ -29,11 +29,18 @@ class HybridEvolution:
 
         return self.find_best_solution()
 
-    def generate_population(self, population_size):
-        pass
+    def generate_population(self, population_size) -> List[List[int]]:
+        population = []
+        while len(population) < population_size:
+            random_solution = random.sample(
+                self.all_vertices, int(np.ceil(len(self.all_vertices) / 2)))
+            if random_solution not in population:
+                population.append(random_solution)
+        return population
 
-    def draw_parents(self):
-        pass
+    def draw_parents(self, population) -> Tuple[List[int], List[int]]:
+        rand_choices = random.sample(range(len(population)), 2)
+        return population[rand_choices[0]], population[rand_choices[1]]
 
     def recombine(self):
         pass
