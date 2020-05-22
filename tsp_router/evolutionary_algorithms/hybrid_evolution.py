@@ -31,7 +31,7 @@ class HybridEvolution:
             parent1, parent2 = self.draw_parents(pop)
             child_solution = self.recombine(parent1, parent2)
             child_solution = self.local_search.improve(
-                parent1, self.matrix, self.all_vertices)
+                child_solution, self.matrix, self.all_vertices)
             # if self.check_if_improves():
             #     self.replace_worst(pop, child_solution)
             self.replace_if_improves(pop, child_solution)
@@ -51,20 +51,19 @@ class HybridEvolution:
         rand_choices = random.sample(range(len(population)), 2)
         return population[rand_choices[0]], population[rand_choices[1]]
 
-    def recombine(self, parent1, parent2):
-        parent1 = Tour.convert_tour(parent1)
-        parent2 = Tour.convert_tour(parent2)
+    def find_sub_tours(self, parent1, parent2):
         sub_tours = []
+        vertices = []
         while parent1 and parent2:
-            print(len(parent1), len(parent2))
+            # print(len(parent1), len(parent2))
             sub_tour = []
             for k1, v1 in parent1.items():
                 if not sub_tour:
                     for k2, v2 in parent2.items():
-                        print(k1, k2)
+                        # print(k1, k2)
                         if k1 == k2:
                             sub_tour.append(k1)
-                            print(k1)
+                            # print(k1)
                             prev1, next1 = parent1[k1]
                             prev2, next2 = parent2[k1]
                             break
@@ -73,7 +72,7 @@ class HybridEvolution:
             if sub_tour:
                 while True:
                     in_len = len(sub_tour)
-                    print("TU:", sub_tour)
+                    # print("TU:", sub_tour)
                     if prev1 == prev2:
                         if prev1 not in sub_tour:
                             sub_tour.insert(0, prev1)
@@ -84,7 +83,7 @@ class HybridEvolution:
                             next1, next2 = parent1[next1][1], parent2[next1][1]
                     if len(sub_tour) == in_len:
                         break
-                print(sub_tour)
+                # print(sub_tour)
                 for s in sub_tour:
                     del parent1[s]
                     del parent2[s]
@@ -92,24 +91,35 @@ class HybridEvolution:
                 # break
             else:
                 for k1 in parent1:
-                    sub_tours.append([k1])
+                    vertices.append(k1)
                 for k2 in parent2:
-                    sub_tours.append([k2])
+                    vertices.append(k2)
                 parent1, parent2 = {}, {}
                 break
+        return sub_tours, vertices
 
-        print(parent1, parent2)
-        print("SUB TOURS:", sub_tours)
+    def recombine(self, parent1, parent2):
+        parent1 = Tour.convert_tour(parent1)
+        parent2 = Tour.convert_tour(parent2)
+        length = len(parent1)
+        sub_tours, veritces = self.find_sub_tours(parent1, parent2)
+        sub_tour = [v for s in sub_tours for v in s]
+        for i in range(length-len(sub_tour)):
+            sub_tour.append(veritces[i])
+        # print(parent1, parent2)
+        # print("SUB TOURS:", sub_tours)
+        return sub_tour
 
     def replace_if_improves(self, population, solution):
         lengths = np.array([self.calc_length(sol) for sol in population])
         new_length = self.calc_length(solution)
         max_idx = np.argmax(lengths)
         if (new_length < lengths[max_idx]) and (solution not in population):
-            population[max_idx] == solution
+            population[max_idx] = solution
 
     def find_best_solution(self, population):
         lengths = np.array([self.calc_length(sol) for sol in population])
+        print(lengths)
         min_idx = np.argmin(lengths)
         return population[min_idx]
 
