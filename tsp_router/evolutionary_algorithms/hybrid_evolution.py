@@ -1,5 +1,4 @@
 import random
-from copy import deepcopy
 # np.random.seed(0)
 from time import time
 from typing import List, Tuple
@@ -29,6 +28,7 @@ class HybridEvolution:
         while max_time > (time() - start_time):
             parent1, parent2 = self.draw_parents(pop)
             child_solution = self.recombine(parent1, parent2)
+            print(self.calc_length(child_solution))
             child_solution = self.local_search.improve(
                 child_solution, self.matrix, self.all_vertices)
             # if self.check_if_improves():
@@ -90,9 +90,9 @@ class HybridEvolution:
                 sub_tours.append(sub_tour)
             else:
                 for k1 in parent1:
-                    vertices.append(k1)
+                    vertices.append([k1])
                 for k2 in parent2:
-                    vertices.append(k2)
+                    vertices.append([k2])
                 parent1, parent2 = {}, {}
                 break
         return sub_tours, vertices
@@ -100,13 +100,16 @@ class HybridEvolution:
     def recombine(self, parent1, parent2):
         parent1 = Tour.convert_tour(parent1)
         parent2 = Tour.convert_tour(parent2)
-        length = len(parent1)
+        max_length = len(parent1)
         sub_tours, vertices = self.find_sub_tours(parent1, parent2)
-        sub_tour = [v for s in sub_tours for v in s]
+        np.random.shuffle(sub_tours)
         np.random.shuffle(vertices)
-        for i in range(length - len(sub_tour)):
-            sub_tour.append(vertices[i])
-        return sub_tour
+        i = 0
+        while len(sub_tours) < max_length:
+            sub_tours.insert(random.randint(0, len(sub_tours) - 1), vertices[i])
+            i += 1
+        new_tour = [v for s in sub_tours for v in s]
+        return new_tour
 
     def replace_if_improves(self, population, solution):
         lengths = np.array([self.calc_length(sol) for sol in population])
