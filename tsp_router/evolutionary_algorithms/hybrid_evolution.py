@@ -1,16 +1,14 @@
-import os
-from copy import deepcopy
-from typing import List, Tuple, Dict
 import random
-
-from tsp_router.tour import Tour
-
-random.seed(0)
-import numpy as np
-np.random.seed(0)
+from copy import deepcopy
+# np.random.seed(0)
 from time import time
+from typing import List, Tuple
+
+# random.seed(0)
+import numpy as np
 
 from tsp_router.local_search.steepest_on_edges import SteepestOnEdges
+from tsp_router.tour import Tour
 from tsp_router.utils.loader import Loader
 
 Candidate = Tuple[int, int]
@@ -21,10 +19,11 @@ class HybridEvolution:
     def __init__(self, matrix: np.ndarray):
         self.local_search = SteepestOnEdges()
         self.matrix = matrix
-        self.all_vertices = list(range(self.matrix.shape[0]))
+        self.all_vertices = list(range(self.matrix.shape[0]))[:]
 
     def solve(self, max_time: int) -> Tuple[List[int], int]:
         pop = self.generate_population(population_size=20)
+        self.pop = pop
         start_time = time()
         i = 0
         while max_time > (time() - start_time):
@@ -43,7 +42,8 @@ class HybridEvolution:
         while len(population) < population_size:
             random_solution = random.sample(
                 self.all_vertices, int(np.ceil(len(self.all_vertices) / 2)))
-            if random_solution not in population:
+            if not self.check_if_tour_is_in_population(random_solution,
+                                                       population):
                 population.append(random_solution)
         return population
 
@@ -88,7 +88,6 @@ class HybridEvolution:
                     del parent1[s]
                     del parent2[s]
                 sub_tours.append(sub_tour)
-                # break
             else:
                 for k1 in parent1:
                     vertices.append(k1)
@@ -102,20 +101,41 @@ class HybridEvolution:
         parent1 = Tour.convert_tour(parent1)
         parent2 = Tour.convert_tour(parent2)
         length = len(parent1)
-        sub_tours, veritces = self.find_sub_tours(parent1, parent2)
+        sub_tours, vertices = self.find_sub_tours(parent1, parent2)
         sub_tour = [v for s in sub_tours for v in s]
-        for i in range(length-len(sub_tour)):
-            sub_tour.append(veritces[i])
-        # print(parent1, parent2)
-        # print("SUB TOURS:", sub_tours)
+        np.random.shuffle(vertices)
+        for i in range(length - len(sub_tour)):
+            sub_tour.append(vertices[i])
         return sub_tour
 
     def replace_if_improves(self, population, solution):
         lengths = np.array([self.calc_length(sol) for sol in population])
         new_length = self.calc_length(solution)
         max_idx = np.argmax(lengths)
-        if (new_length < lengths[max_idx]) and (solution not in population):
+        # if (new_length < lengths[max_idx]) and (solution not in population):
+        if (new_length < lengths[
+            max_idx]) and not self.check_if_tour_is_in_population(solution,
+                                                                  population):
             population[max_idx] = solution
+
+    def shift_list(self, seq, n=0):
+        a = n % len(seq)
+        return seq[-a:] + seq[:-a]
+
+    def check_if_tour_is_in_population(self, solution, population):
+        rev_solution = solution[::-1]
+        for p in population:
+            if solution[0] in p:
+                # tmp1 = self.shift_list(p, p.index(solution[0]))
+                tmp1 = list(np.roll(p, -1 * p.index(solution[0])))
+                if solution == tmp1:
+                    return True
+            if rev_solution[0] in p:
+                # tmp2 = self.shift_list(p, p.index(rev_solution[0]))
+                tmp2 = list(np.roll(p, -1 * p.index(rev_solution[0])))
+                if rev_solution == tmp2:
+                    return True
+        return False
 
     def find_best_solution(self, population):
         lengths = np.array([self.calc_length(sol) for sol in population])
@@ -126,7 +146,7 @@ class HybridEvolution:
     def calc_length(self, solution):
         length = 0
         for i in range(len(solution)):
-            length += self.matrix[solution[i-1], solution[i]]
+            length += self.matrix[solution[i - 1], solution[i]]
         return length
 
 
