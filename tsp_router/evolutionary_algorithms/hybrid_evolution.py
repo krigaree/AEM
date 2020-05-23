@@ -18,7 +18,7 @@ class HybridEvolution:
     def __init__(self, matrix: np.ndarray):
         self.local_search = SteepestOnEdges()
         self.matrix = matrix
-        self.all_vertices = list(range(self.matrix.shape[0]))[:]
+        self.all_vertices = list(range(self.matrix.shape[0]))
 
     def solve(self, max_time: int) -> Tuple[List[int], int]:
         pop = self.generate_population(population_size=20)
@@ -28,7 +28,7 @@ class HybridEvolution:
         while max_time > (time() - start_time):
             parent1, parent2 = self.draw_parents(pop)
             child_solution = self.recombine(parent1, parent2)
-            print(self.calc_length(child_solution))
+            print("CHILD", len(child_solution), self.calc_length(child_solution))
             child_solution = self.local_search.improve(
                 child_solution, self.matrix, self.all_vertices)
             # if self.check_if_improves():
@@ -45,6 +45,7 @@ class HybridEvolution:
             if not self.check_if_tour_is_in_population(random_solution,
                                                        population):
                 population.append(random_solution)
+                print("ADD", len(random_solution))
         return population
 
     def draw_parents(self, population) -> Tuple[List[int], List[int]]:
@@ -98,17 +99,22 @@ class HybridEvolution:
         return sub_tours, vertices
 
     def recombine(self, parent1, parent2):
+        max_length = len(parent1)
+        print("MAX", max_length)
         parent1 = Tour.convert_tour(parent1)
         parent2 = Tour.convert_tour(parent2)
-        max_length = len(parent1)
+        print("PAR1", len(parent1))
         sub_tours, vertices = self.find_sub_tours(parent1, parent2)
+        sub_length = [len(s) for s in sub_tours]
+        print("TT", max_length, max_length-sum(sub_length))
         np.random.shuffle(sub_tours)
         np.random.shuffle(vertices)
         i = 0
-        while len(sub_tours) < max_length:
+        while i < max_length-sum(sub_length):
             sub_tours.insert(random.randint(0, len(sub_tours) - 1), vertices[i])
             i += 1
         new_tour = [v for s in sub_tours for v in s]
+        print("NEW TOUR", len(new_tour))
         return new_tour
 
     def replace_if_improves(self, population, solution):
