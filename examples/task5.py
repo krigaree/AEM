@@ -11,7 +11,6 @@ random.seed(0)
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
-from tsp_router.utils.evaluator import Evaluator
 from tsp_router.utils.loader import Loader
 from tsp_router.utils.visualizer import Visualizer
 
@@ -32,27 +31,18 @@ def run(path):
 
     visualizer = Visualizer()
 
-    # ms = SteepestOnEdgesMultipleStart()
-    # sp = SteepestOnEdgesSmallPerturbation()
-    # ln = LocalSearchWithLargeScaleNeighbourhood()
-    he = HybridEvolution(matrix)
-    solver = he
+    solver = HybridEvolution(matrix)
 
-    all_vertices = np.arange(len(vertices))
     solutions = []
     lengths = []
     times = []
 
-    for i in tqdm(range(1)):
-        random_solution = random.sample(
-            list(all_vertices), int(np.ceil(len(all_vertices) / 2)))
-        start = time()
-        improved_solution, n_iterations = solver.solve(10)
+    for i in tqdm(range(10)):
+        improved_solution, n_iterations = solver.solve(360)
         print("llll", len(improved_solution))
         print("improved_solution", improved_solution)
         print("unique", len(np.unique(np.array(improved_solution))))
         print("n_iterations:", n_iterations)
-        end = time()
 
         times.append(n_iterations)
         l = 0
@@ -101,9 +91,6 @@ def run_all_algorithms(path):
         for i in tqdm(range(10)):
             random_solution = random.sample(
                 list(all_vertices), int(np.ceil(len(all_vertices) / 2)))
-            start = time()
-            # improved_solution = two_opt.improve(random_solution, matrix, all_vertices)
-            # improved_solution = two_opt.improve(matrix, all_vertices, 100)
             improved_solution, n_iterations = alg.solve(
                 random_solution, matrix, all_vertices, 360)
             # print("llll", len(improved_solution))
@@ -135,7 +122,7 @@ def run_all_algorithms(path):
 
 def main():
     # run('../data/kroA200.tsp')
-    run('../data/kroA200.tsp')
+    run('../data/kroB200.tsp')
     # run_all_algorithms('../data/kroA200.tsp')
 
 
