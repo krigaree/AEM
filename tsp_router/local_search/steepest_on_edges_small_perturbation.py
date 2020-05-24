@@ -147,7 +147,7 @@ class SteepestOnEdgesSmallPerturbation:
             self.swap_nodes(node_in_tour_to_swap, node_outside_tour_to_swap)
 
     def solve(self, tour: Tour, matrix: np.ndarray,
-                all_vertices: Tour, max_time: int) -> Tuple[int, Tour]:
+                all_vertices: Tour, max_time: int) -> Tuple[Tour, int]:
         """We want to iterate until there is no improvement."""
         self.tour = self.convert_tour(tour)
         self.matrix = matrix
