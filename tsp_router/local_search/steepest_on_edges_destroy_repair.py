@@ -136,11 +136,12 @@ class LocalSearchWithLargeScaleNeighbourhood:
         self.repairer = GreedyCycleRepairer(matrix)
 
         iterations = 0
+        tours_history = []
         start_time = time()
         end_time = time()
         while (end_time - start_time) < max_time:
             iterations += 1
-
+            tours_history.append(best_tour_length)
             new_tour = self.destroy(best_tour)
             new_tour = self.repair(new_tour)
             # print("num of vert", len(new_tour))
@@ -157,4 +158,4 @@ class LocalSearchWithLargeScaleNeighbourhood:
             # print('l:', length)
             end_time = time()
         # print(i)
-        return best_tour, iterations  # list(tour)
+        return best_tour, iterations, tours_history  # list(tour)
