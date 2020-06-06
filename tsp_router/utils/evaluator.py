@@ -1,8 +1,11 @@
 from typing import List, Optional
+
 import numpy as np
+
 from ..constructive_heuristics.solver import Solver
 
 Solution = List[int]
+
 
 class Evaluator:
 
@@ -16,9 +19,9 @@ class Evaluator:
     def evaluate(self, solver: Solver, iterations: int) -> None:
         results = []
         for i in range(iterations):
-            results.append(solver.solve(start_idx = i))
+            results.append(solver.solve(start_idx=i))
         solutions = np.array(results)
-        solutions = solutions[np.argsort(solutions[:, 1])]
+        self.solutions = solutions[np.argsort(solutions[:, 1])]
         self.min_solution = solutions[0, 0]
         self.min_val = solutions[0, 1]
         self.max_solution = solutions[-1, 0]

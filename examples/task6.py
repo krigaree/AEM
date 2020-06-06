@@ -23,12 +23,25 @@ from tsp_router.local_search.steepest_on_edges_destroy_repair import \
     LocalSearchWithLargeScaleNeighbourhood
 from tsp_router.evolutionary_algorithms.hybrid_evolution import HybridEvolution
 
+from tsp_router.constructive_heuristics.greedy_regret_cycle import \
+    GreedyRegretCycle
+from tsp_router.utils.evaluator import Evaluator
+
 
 def random_cluster(matrix):
     random_point = np.random.randint(matrix.shape[0])
     cluster_size = int(np.ceil(matrix.shape[0] / 2))
     random_solution = np.argsort(matrix[random_point])[:cluster_size]
     return random_solution
+
+
+def best_cycle(matrix, n=20):
+    regret_solver = GreedyRegretCycle(matrix)
+    evaluator = Evaluator()
+    evaluator.evaluate(regret_solver, 100)
+    # evaluator.print_metrics()
+    return evaluator.solutions[:n]
+    # visualizer.create_graph_euclidean(evaluator.min_solution, matrix, vertices)
 
 
 # def random_solution(matrix):
@@ -44,7 +57,7 @@ def run(path):
 
     visualizer = Visualizer()
 
-    solver = LocalSearchWithLargeScaleNeighbourhood()
+    # solver = LocalSearchWithLargeScaleNeighbourhood()
 
     all_vertices = np.arange(len(vertices))
 
@@ -52,10 +65,13 @@ def run(path):
     lengths = []
     times = []
 
-    for i in tqdm(range(60)):
-        random_solution = random_cluster(matrix)
+    for i in tqdm(range(10)):
+        # random_solution = random_cluster(matrix)
+        # best_solutions = best_cycle(matrix)
+        best_solutions = best_cycle(matrix, 100)
+        solver = LocalSearchWithLargeScaleNeighbourhood(best_solutions)
         improved_solution, n_iterations, lengths_history = solver.solve(
-            random_solution, matrix, all_vertices, 360)
+            [], matrix, all_vertices, 360)
         # plt.plot(lengths_history[1000:])
         # plt.show()
         # visualizer.create_graph_euclidean(
