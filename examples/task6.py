@@ -1,11 +1,10 @@
-import sys
 import os.path
-from tqdm import tqdm
-import numpy as np
-from statistics import mean
-from time import time
 import random
-from matplotlib import pyplot as plt
+import sys
+from statistics import mean
+
+import numpy as np
+from tqdm import tqdm
 
 random.seed(0)
 
@@ -15,15 +14,12 @@ sys.path.append(
 from tsp_router.utils.loader import Loader
 from tsp_router.utils.visualizer import Visualizer
 
-from tsp_router.local_search.steepest_on_edges_multiple_start import \
-    SteepestOnEdgesMultipleStart
-from tsp_router.local_search.steepest_on_edges_small_perturbation import \
-    SteepestOnEdgesSmallPerturbation
-from tsp_router.local_search.steepest_on_edges_destroy_repair import \
+from tsp_router.local_search.steepest_on_edges_destroy_repair_with_restarting import \
     LocalSearchWithLargeScaleNeighbourhood
-from tsp_router.evolutionary_algorithms.hybrid_evolution import HybridEvolution
 
-from tsp_router.constructive_heuristics.greedy_regret_cycle import \
+# from tsp_router.constructive_heuristics.greedy_regret_cycle import \
+#     GreedyRegretCycle
+from tsp_router.constructive_heuristics.greedy_regret_cycle_with_local_search import \
     GreedyRegretCycle
 from tsp_router.utils.evaluator import Evaluator
 
@@ -38,7 +34,7 @@ def random_cluster(matrix):
 def best_cycle(matrix, n=20):
     regret_solver = GreedyRegretCycle(matrix)
     evaluator = Evaluator()
-    evaluator.evaluate(regret_solver, 100)
+    evaluator.evaluate(regret_solver, 200)
     # evaluator.print_metrics()
     return evaluator.solutions[:n]
     # visualizer.create_graph_euclidean(evaluator.min_solution, matrix, vertices)
@@ -68,7 +64,7 @@ def run(path):
     for i in tqdm(range(10)):
         # random_solution = random_cluster(matrix)
         # best_solutions = best_cycle(matrix)
-        best_solutions = best_cycle(matrix, 100)
+        best_solutions = best_cycle(matrix, 10)
         solver = LocalSearchWithLargeScaleNeighbourhood(best_solutions)
         improved_solution, n_iterations, lengths_history = solver.solve(
             [], matrix, all_vertices, 360)
@@ -76,7 +72,7 @@ def run(path):
         # plt.show()
         # visualizer.create_graph_euclidean(
         #     improved_solution, matrix, vertices, "wykres.png")
-        print("lengths_history", lengths_history)
+        # print("lengths_history", lengths_history)
         print("llll", len(improved_solution))
         print("improved_solution", improved_solution)
         print("unique", len(np.unique(np.array(improved_solution))))

@@ -128,7 +128,7 @@ class LocalSearchWithLargeScaleNeighbourhood:
             matrix: np.ndarray,
             all_vertices: Tour,
             max_time: int
-    ) -> Tuple[List, int]:
+    ):
         # tour = Tour(tour)
         """We want to iterate until there is no improvement."""
         ls = SteepestOnEdges()
@@ -146,13 +146,14 @@ class LocalSearchWithLargeScaleNeighbourhood:
         end_time = time()
         iterations_from_correction = 0
         best_tours = {}
-        destroy_rate = 50
-        destroy_decay = 0.999
+        destroy_rate = 30
+        destroy_decay = 2 - 0.9
         min_destroy_rate = 20
+        max_destroy_rate = 70
         while (end_time - start_time) < max_time:
             iterations += 1
             if iterations_from_correction > 500:
-                destroy_rate = 50
+                destroy_rate = 30
                 print("-" * 20)
                 print(f"Starting from new tour")
                 best_tours[best_tour_length] = best_tour.copy()
@@ -173,8 +174,10 @@ class LocalSearchWithLargeScaleNeighbourhood:
                 best_tour = new_tour
                 best_tour_length = new_tour_length
                 iterations_from_correction = 0
-                destroy_rate = max(min_destroy_rate,
-                                   destroy_decay * destroy_rate)
+                destroy_rate += 2.5
+                destroy_rate = min(destroy_rate, 70)
+                # destroy_rate = min(max_destroy_rate,
+                #                    destroy_decay * destroy_rate)
                 print("new_tour_length:", new_tour_length)
                 print(destroy_rate)
             else:
