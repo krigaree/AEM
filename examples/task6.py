@@ -14,7 +14,7 @@ sys.path.append(
 from tsp_router.utils.loader import Loader
 from tsp_router.utils.visualizer import Visualizer
 
-from tsp_router.local_search.steepest_on_edges_destroy_repair_with_restarting import \
+from tsp_router.local_search.steepest_on_edges_destroy_repair_with_modifications import \
     LocalSearchWithLargeScaleNeighbourhood
 
 from tsp_router.constructive_heuristics.greedy_regret_cycle import \
