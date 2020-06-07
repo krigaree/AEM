@@ -17,9 +17,7 @@ from tsp_router.utils.visualizer import Visualizer
 from tsp_router.local_search.steepest_on_edges_destroy_repair_with_restarting import \
     LocalSearchWithLargeScaleNeighbourhood
 
-# from tsp_router.constructive_heuristics.greedy_regret_cycle import \
-#     GreedyRegretCycle
-from tsp_router.constructive_heuristics.greedy_regret_cycle_with_local_search import \
+from tsp_router.constructive_heuristics.greedy_regret_cycle import \
     GreedyRegretCycle
 from tsp_router.utils.evaluator import Evaluator
 
@@ -35,44 +33,26 @@ def best_cycle(matrix, n=20):
     regret_solver = GreedyRegretCycle(matrix)
     evaluator = Evaluator()
     evaluator.evaluate(regret_solver, 200)
-    # evaluator.print_metrics()
     return evaluator.solutions[:n]
-    # visualizer.create_graph_euclidean(evaluator.min_solution, matrix, vertices)
-
-
-# def random_solution(matrix):
-#     random_solution = random.sample(
-#         list(range(matrix.shape[0])), int(np.ceil(len(matrix.shape[0]) / 2)))
 
 
 def run(path):
     loader = Loader(path)
     vertices = loader.load_vertices()
-
     matrix = loader.calculate_matrix(vertices)
-
     visualizer = Visualizer()
-
-    # solver = LocalSearchWithLargeScaleNeighbourhood()
-
     all_vertices = np.arange(len(vertices))
+    solver = None
 
     solutions = []
     lengths = []
     times = []
 
     for i in tqdm(range(10)):
-        # random_solution = random_cluster(matrix)
-        # best_solutions = best_cycle(matrix)
         best_solutions = best_cycle(matrix, 10)
         solver = LocalSearchWithLargeScaleNeighbourhood(best_solutions)
         improved_solution, n_iterations, lengths_history = solver.solve(
             [], matrix, all_vertices, 360)
-        # plt.plot(lengths_history[1000:])
-        # plt.show()
-        # visualizer.create_graph_euclidean(
-        #     improved_solution, matrix, vertices, "wykres.png")
-        # print("lengths_history", lengths_history)
         print("llll", len(improved_solution))
         print("improved_solution", improved_solution)
         print("unique", len(np.unique(np.array(improved_solution))))
@@ -101,7 +81,6 @@ def run(path):
 def main():
     # run('../data/kroA200.tsp')
     run('../data/kroA200.tsp')
-    # run_all_algorithms('../data/kroA200.tsp')
 
 
 if __name__ == '__main__':
